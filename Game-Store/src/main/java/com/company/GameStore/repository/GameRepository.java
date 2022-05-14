@@ -1,4 +1,7 @@
 package com.company.GameStore.repository;
 
-public interface GameRepository {
+import com.company.GameStore.DTO.Game;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface GameRepository extends JpaRepository<Game, Integer> {
 }
