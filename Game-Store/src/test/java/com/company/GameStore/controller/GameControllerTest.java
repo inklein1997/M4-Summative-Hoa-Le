@@ -147,8 +147,6 @@ public class GameControllerTest {
                 .andExpect(status().isUnprocessableEntity());
     }
 
-    public void
-
     /* ============================= TESTING POST ROUTES ============================= */
     @Test
     public void shouldReturnCreatedGameAndStatus201() throws Exception {
@@ -158,7 +156,14 @@ public class GameControllerTest {
     /* ============================= TESTING PUT ROUTES ============================= */
     @Test
     public void shouldRespondWithStatus204WithValidPutRequest() throws Exception {
-        
+        Game inputGame = new Game(13,"Nintendo Switch Sports", "M (Mature)", "Class sports simulation video game", 49.99, "Nintendo", 15);
+        String inputJson = mapper.writeValueAsString(inputGame);
+
+        mockMvc.perform(put("/games/13")
+                    .content(inputJson)
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 
     /* ============================= TESTING PUT ROUTES ============================= */
