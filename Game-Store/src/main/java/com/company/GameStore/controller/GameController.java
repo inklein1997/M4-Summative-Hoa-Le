@@ -19,10 +19,11 @@ public class GameController {
     @GetMapping("/games")
     @ResponseStatus(HttpStatus.OK)
     public List<Game> getGames(@RequestParam(required = false) String studio, @RequestParam(required = false) String esrbRating) {
-        if (studio != null) {
+        if (studio != null && esrbRating != null) {
+            return service.getGamesByStudioAndEsrbRating(studio, esrbRating);
+        } else if (studio != null) {
             return service.getGamesByStudio(studio);
-        }
-        if (esrbRating != null) {
+        } else if (esrbRating != null) {
             return service.getGamesByEsrbRating(esrbRating);
         }
         return service.getAllGames();
