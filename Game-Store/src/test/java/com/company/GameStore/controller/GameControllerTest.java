@@ -1,5 +1,6 @@
 package com.company.GameStore.controller;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import com.company.GameStore.DTO.Game;
 import com.company.GameStore.service.ServiceLayer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -186,10 +187,19 @@ public class GameControllerTest {
     }
 
     /* ============================= TESTING PUT ROUTES ============================= */
+    /* --------------------------------- HAPPY PATHS -------------------------------- */
     @Test
     public void shouldRespondWithStatus204WithValidDeleteRequest() throws Exception {
         mockMvc.perform(delete("/games/1"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }
+
+    /* ---------------------------------- SAD PATHS --------------------------------- */
+    @Test public void shouldResponseWithStatus404IfGameIdIsNotFoundForDelete() throws Exception {
+        mockMvc.perform(delete("/games/1412"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
 }
