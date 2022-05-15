@@ -23,6 +23,14 @@ public class ServiceLayer {
         return gameRepository.findAll();
     }
 
+    public List<Game> getGamesByStudio(String studio) { return gameRepository.findByStudio(studio); }
+
+    public List<Game> getGamesByEsrbRating(String esrbRating) { return gameRepository.findByEsrbRating(esrbRating); }
+
+    public List<Game> getGamesByStudioAndEsrbRating(String studio, String esrbRating) { return gameRepository.findByStudioAndEsrbRating(studio, esrbRating); }
+
+    public Optional<Game> getGameByTitle(String title) { return gameRepository.findByTitle(title); }
+
     public Optional<Game> getSingleGame(int id) {
         return gameRepository.findById(id);
     }
