@@ -18,7 +18,10 @@ public class GameController {
 
     @GetMapping("/games")
     @ResponseStatus(HttpStatus.OK)
-    public List<Game> getGames() {
+    public List<Game> getGames(@RequestParam(required = false) String studio) {
+        if (studio != null) {
+            return service.getGamesByStudio(studio);
+        }
         return service.getAllGames();
     }
 
