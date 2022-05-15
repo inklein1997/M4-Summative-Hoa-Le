@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -121,7 +122,7 @@ public class GameControllerTest {
                 .andExpect(status().isOk());
     }
 
-    /* --------------------------------- SAD PATHS -------------------------------- */
+    /* ---------------------------------- SAD PATHS --------------------------------- */
     @Test
     public void shouldReturn404StatusCodeIfGameTitleDoesNotExist() throws Exception {
         mockMvc.perform(get("/games/title/FakeGame1231"))
@@ -129,12 +130,34 @@ public class GameControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
     public void shouldReturn404StatusCodeIfGameIdDoesNotExist() throws Exception {
         mockMvc.perform(get("/games/10023"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
+    /* ============================= TESTING POST ROUTES ============================= */
+    @Test
+    public void shouldReturnCreatedGameAndStatus201() throws Exception {
+
+    }
+
+    /* ============================= TESTING PUT ROUTES ============================= */
+    /* --------------------------------- HAPPY PATHS -------------------------------- */
+    @Test
+    public void shouldRespondWithStatus204WithValidPutRequest() throws Exception {
+        Game inputGame = new Game(13,"Nintendo Switch Sports", "M (Mature)", "Class sports simulation video game", 49.99, "Nintendo", 15);
+        String inputJson = mapper.writeValueAsString(inputGame);
+
+        mockMvc.perform(put("/games/13")
+                    .content(inputJson)
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+    /* ---------------------------------- SAD PATHS --------------------------------- */
+    @Test
     public void shouldReturn422StatusCodeIfGameIdsDoNotMatch() throws Exception {
         Game inputGame = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
 
@@ -147,23 +170,19 @@ public class GameControllerTest {
                 .andExpect(status().isUnprocessableEntity());
     }
 
-    /* ============================= TESTING POST ROUTES ============================= */
-    @Test
-    public void shouldReturnCreatedGameAndStatus201() throws Exception {
+    @Test public void hsouldReturn422StatusCodeIfRequestBodyIsInvalidForPutRequest() throws Exception {
+        HashMap<String, Object> invalidRequestBody = new HashMap();
+        invalidRequestBody.put("id", Integer.parseInt("136"));
+        invalidRequestBody.put("title", "FakeGameTitle1223");
+        invalidRequestBody.put("releaseData", "2022-10-12");
 
-    }
+        String inputJson = mapper.writeValueAsString(invalidRequestBody);
 
-    /* ============================= TESTING PUT ROUTES ============================= */
-    @Test
-    public void shouldRespondWithStatus204WithValidPutRequest() throws Exception {
-        Game inputGame = new Game(13,"Nintendo Switch Sports", "M (Mature)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-        String inputJson = mapper.writeValueAsString(inputGame);
-
-        mockMvc.perform(put("/games/13")
+        mockMvc.perform(put("/games/136")
                     .content(inputJson)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     /* ============================= TESTING PUT ROUTES ============================= */
