@@ -25,6 +25,8 @@ public class ServiceLayer {
 
     public List<Game> getGamesByStudio(String studio) { return gameRepository.findByStudio(studio); }
 
+    public List<Game> getGamesByEsrbRating(String esrbRating) { return gameRepository.findByEsrbRating(esrbRating); }
+
     public Optional<Game> getSingleGame(int id) {
         return gameRepository.findById(id);
     }
