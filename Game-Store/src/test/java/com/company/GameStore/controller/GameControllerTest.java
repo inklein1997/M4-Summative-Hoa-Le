@@ -188,6 +188,8 @@ public class GameControllerTest {
     /* ============================= TESTING PUT ROUTES ============================= */
     @Test
     public void shouldRespondWithStatus204WithValidDeleteRequest() throws Exception {
-
+        mockMvc.perform(delete("/games/1"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 }
