@@ -140,8 +140,19 @@ public class GameControllerTest {
 
     /* ============================= TESTING POST ROUTES ============================= */
     @Test
-    public void shouldReturnCreatedGameAndStatus201() throws Exception {
+    public void shouldReturnGameOnPostRequestAndStatus201() throws Exception {
+        Game expectedGame = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
+        Game inputtedGame = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
 
+        String expectedJson = mapper.writeValueAsString(expectedGame);
+        String inputtedJson = mapper.writeValueAsString(inputtedGame);
+
+        mockMvc.perform(post("/games")
+                    .content(inputtedJson)
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(content().json(expectedJson))
+                .andExpect(status().isOk());
     }
 
     /* ============================= TESTING PUT ROUTES ============================= */
