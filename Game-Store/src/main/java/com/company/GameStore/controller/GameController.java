@@ -31,8 +31,17 @@ public class GameController {
 
     @GetMapping("/games/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Optional<Game> getGame(@PathVariable int id) {
+    public Optional<Game> getGame(@PathVariable int id, @RequestParam(required = false) String title) {
+        if (title != null) {
+            return service.getGameByTitle(title);
+        }
         return service.getSingleGame(id);
+    }
+
+    @GetMapping("/games/title/{title}")
+    @ResponseStatus(HttpStatus.OK)
+    public Optional<Game> getGameByTitle(@PathVariable String title) {
+        return service.getGameByTitle(title);
     }
 
     @PostMapping("/games")
