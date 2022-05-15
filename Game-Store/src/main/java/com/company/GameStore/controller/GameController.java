@@ -31,13 +31,14 @@ public class GameController {
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     public Game createGame(@RequestBody Game game) {
+        System.out.println(game);
         return service.addGame(game);
     }
 
     @PutMapping("/games/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateGame(@RequestBody Game game, @PathVariable int id) {
-        if (id == 0) {
+        if (game.getGame_id() == null) {
             game.setGame_id(id);
         }
         if (id != game.getGame_id()) {
