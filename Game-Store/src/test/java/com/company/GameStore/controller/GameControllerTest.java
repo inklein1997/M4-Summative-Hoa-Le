@@ -139,6 +139,7 @@ public class GameControllerTest {
     }
 
     /* ============================= TESTING POST ROUTES ============================= */
+    /* --------------------------------- HAPPY PATHS -------------------------------- */
     @Test
     public void shouldReturnGameOnPostRequestAndStatus201() throws Exception {
         Game expectedGame = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
@@ -153,6 +154,23 @@ public class GameControllerTest {
                 .andDo(print())
                 .andExpect(content().json(expectedJson))
                 .andExpect(status().isOk());
+    }
+
+    /* ---------------------------------- SAD PATHS --------------------------------- */
+    @Test
+    public void ShouldReturnStatus422ForInvalidRequestBodyOnPostRequest() throws Exception {
+        HashMap<String, Object> invalidRequestBody = new HashMap();
+        invalidRequestBody.put("id", Integer.parseInt("136"));
+        invalidRequestBody.put("title", "FakeGameTitle1223");
+        invalidRequestBody.put("releaseData", "2022-10-12");
+
+        String inputJson = mapper.writeValueAsString(invalidRequestBody);
+
+        mockMvc.perform(post("/games")
+                        .content(inputJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     /* ============================= TESTING PUT ROUTES ============================= */
@@ -182,7 +200,7 @@ public class GameControllerTest {
                 .andExpect(status().isUnprocessableEntity());
     }
 
-    @Test public void hsouldReturn422StatusCodeIfRequestBodyIsInvalidForPutRequest() throws Exception {
+    @Test public void shouldReturn422StatusCodeIfRequestBodyIsInvalidForPutRequest() throws Exception {
         HashMap<String, Object> invalidRequestBody = new HashMap();
         invalidRequestBody.put("id", Integer.parseInt("136"));
         invalidRequestBody.put("title", "FakeGameTitle1223");
