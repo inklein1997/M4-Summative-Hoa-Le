@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -36,6 +37,8 @@ public class GameControllerTest {
     }
 
     /* ============================= TESTING GET ROUTES ============================= */
+    /* --------------------------------- HAPPY PATHS -------------------------------- */
+
     @Test
     public void shouldReturnListOfAllGamesAndStatus200() throws Exception {
 
@@ -118,6 +121,34 @@ public class GameControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /* --------------------------------- SAD PATHS -------------------------------- */
+    @Test
+    public void shouldReturn404StatusCodeIfGameTitleDoesNotExist() throws Exception {
+        mockMvc.perform(get("/games/title/FakeGame1231"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    public void shouldReturn404StatusCodeIfGameIdDoesNotExist() throws Exception {
+        mockMvc.perform(get("/games/10023"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    public void shouldReturn422StatusCodeIfGameIdsDoNotMatch() throws Exception {
+        Game inputGame = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
+
+        String inputJson = mapper.writeValueAsString(inputGame);
+
+        mockMvc.perform(put("/games/100")
+                    .content(inputJson)
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    public void
+
     /* ============================= TESTING POST ROUTES ============================= */
     @Test
     public void shouldReturnCreatedGameAndStatus201() throws Exception {
@@ -127,7 +158,7 @@ public class GameControllerTest {
     /* ============================= TESTING PUT ROUTES ============================= */
     @Test
     public void shouldRespondWithStatus204WithValidPutRequest() throws Exception {
-
+        
     }
 
     /* ============================= TESTING PUT ROUTES ============================= */
