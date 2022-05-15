@@ -18,6 +18,11 @@ public class ServiceLayer {
         this.gameRepository = gameRepository;
     }
 
+    // CLEAR DATABASE
+    public void clearDatabase() {
+        gameRepository.deleteAll();
+    }
+
     // GAME CRUD OPERATIONS
     public List<Game> getAllGames() {
         return gameRepository.findAll();
