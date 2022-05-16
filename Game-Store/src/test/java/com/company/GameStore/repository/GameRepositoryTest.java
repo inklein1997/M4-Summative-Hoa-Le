@@ -34,7 +34,6 @@ public class GameRepositoryTest {
         expectedGameList.clear();
     }
 
-    /* ------------------ Happy Paths ------------------ */
     @Test
     public void addGetDeleteGame() {
         Optional<Game> game1 = gameRepository.findById(game.getGame_id());

@@ -61,7 +61,7 @@ public class InvoiceControllerTest {
 
         when(serviceLayer.getAllInvoices()).thenReturn(invoiceList);
         when(serviceLayer.getInvoiceById(1)).thenReturn(Optional.of(expectedInvoice1));
-        when(serviceLayer.createInvoice(inputtedInvoice)).thenReturn(expectedInvoice1);
+        when(serviceLayer.addInvoice(inputtedInvoice)).thenReturn(expectedInvoice1);
     }
 
     /* ============================= TESTING GET ROUTES ============================= */
