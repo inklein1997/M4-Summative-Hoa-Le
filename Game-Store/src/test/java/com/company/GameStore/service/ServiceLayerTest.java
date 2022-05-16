@@ -2,6 +2,7 @@ package com.company.GameStore.service;
 
 import com.company.GameStore.DTO.Game;
 import com.company.GameStore.repository.GameRepository;
+import com.company.GameStore.repository.InvoiceRepository;
 import com.company.GameStore.repository.TshirtRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ public class ServiceLayerTest {
     ServiceLayer serviceLayer;
     GameRepository gameRepository;
     TshirtRepository tshirtRepository;
+    InvoiceRepository invoiceRepository;
 
 
     private Game expectedGame;
@@ -30,7 +32,7 @@ public class ServiceLayerTest {
     public void setUp() throws Exception {
         setUpGameRepositoryMock();
 
-        serviceLayer = new ServiceLayer(gameRepository, tshirtRepository);
+        serviceLayer = new ServiceLayer(gameRepository, tshirtRepository, invoiceRepository);
     }
 
     private void setUpGameRepositoryMock() {

@@ -47,10 +47,10 @@ public class GameControllerTest {
     @Before
     public void setUp() {
         serviceLayer.clearDatabase();
-        setUpMocksForGetRoutes();
+        setUpMocksForGameRoutes();
     }
 
-    private void setUpMocksForGetRoutes() {
+    private void setUpMocksForGameRoutes() {
         expectedGameList = Arrays.asList(
                 new Game(1, "Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15),
                 new Game(2, "Miitopia", "M (Mature)", "An adventure with a Mii character cast of your choosing", 39.99, "Nintendo", 7),
@@ -237,7 +237,7 @@ public class GameControllerTest {
     /* --------------------------------- HAPPY PATHS -------------------------------- */
     @Test
     public void shouldRespondWithStatus204WithValidDeleteRequest() throws Exception {
-        mockMvc.perform(delete("/games/1"))
+        mockMvc.perform(delete("/games/13"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }

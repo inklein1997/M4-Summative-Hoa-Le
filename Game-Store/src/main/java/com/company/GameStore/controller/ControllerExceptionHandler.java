@@ -46,6 +46,7 @@ public class ControllerExceptionHandler {
         ResponseEntity<List<CustomErrorResponse>> responseEntity = new ResponseEntity<>(errorResponseList, HttpStatus.UNPROCESSABLE_ENTITY);
         return responseEntity;
     }
+
     @ExceptionHandler(value = IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseEntity<CustomErrorResponse> outOfRangeException(IllegalArgumentException e) {

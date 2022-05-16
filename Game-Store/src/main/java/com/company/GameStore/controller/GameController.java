@@ -37,6 +37,9 @@ public class GameController {
         if (title != null) {
             return service.getGameByTitle(title);
         }
+        if (service.getSingleGame(id).orElse(null) == null) {
+            throw new QueryNotFoundException("No game with that title exists in our inventory.");
+        }
         return service.getSingleGame(id);
     }
 
@@ -65,6 +68,9 @@ public class GameController {
         if (id != game.getGame_id()) {
             throw new DataIntegrityViolationException("Your request body ID does not match your Path Variable id");
         }
+        if (service.getSingleGame(id).orElse(null) == null) {
+            throw new QueryNotFoundException("No game with that title exists in our inventory.");
+        }
 
         service.updateGame(game);
     }
@@ -72,6 +78,9 @@ public class GameController {
     @DeleteMapping("/games/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteGame(@PathVariable int id) {
+        if (service.getSingleGame(id).orElse(null) == null) {
+            throw new QueryNotFoundException("No game with that title exists in our inventory.");
+        }
         service.deleteGame(id);
     }
 }
