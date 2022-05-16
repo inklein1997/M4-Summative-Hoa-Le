@@ -4,6 +4,7 @@ import com.company.GameStore.DTO.Console;
 import com.company.GameStore.DTO.Game;
 
 import com.company.GameStore.DTO.Invoice;
+import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.repository.ConsoleRepository;
 
 import com.company.GameStore.DTO.Tshirt;
@@ -35,6 +36,7 @@ public class ServiceLayer {
     public void clearDatabase() {
         gameRepository.deleteAll();
         tshirtRepository.deleteAll();
+        invoiceRepository.deleteAll();
     }
 
     //Jpa Searches
@@ -97,7 +99,12 @@ public class ServiceLayer {
 
     public List<Invoice> getAllInvoices() { return invoiceRepository.findAll(); }
 
-    public Optional<Invoice> getInvoiceById(int id) { return invoiceRepository.findById(id); }
+    public Optional<Invoice> getInvoiceById(int id) {
+        if (invoiceRepository.findById(id).orElse(null) == null) {
+            throw new QueryNotFoundException("An invoice with that ID does not exist yet.");
+        }
+        return invoiceRepository.findById(id);
+    }
 
     public Invoice createInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
 }
