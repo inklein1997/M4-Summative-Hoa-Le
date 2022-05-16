@@ -35,9 +35,52 @@ public class GameControllerTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
+    private List<Game> expectedGameList;
+    private List<Game> expectedGameListByStudio;
+    private List<Game> expectedGameListByEsrbRating;
+    private List<Game> expectedGameListByStudioAndEsrbRating;
+    private Game expectedGame;
+    private Game inputtedGame;
+    private String expectedJson;
+    private String inputtedJson;
+
     @Before
     public void setUp() {
         serviceLayer.clearDatabase();
+        setUpMocksForGetRoutes();
+    }
+
+    private void setUpMocksForGetRoutes() {
+        expectedGameList = Arrays.asList(
+                new Game(1, "Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15),
+                new Game(2, "Miitopia", "M (Mature)", "An adventure with a Mii character cast of your choosing", 39.99, "Nintendo", 7),
+                new Game(3, "Halo Infinite", "T (Teen)", "Experience the ultimate gameplay and explore a stunning sci-fi world in this riveting, first person shooter video game.", 39.99, "Xbox Game Studios", 5)
+        );
+
+        expectedGameListByStudio = Arrays.asList(
+                new Game(1, "Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15),
+                new Game(2, "Miitopia", "M (Mature)", "An adventure with a Mii character cast of your choosing", 39.99, "Nintendo", 7)
+        );
+
+        expectedGameListByEsrbRating = Arrays.asList(
+                new Game(2, "Miitopia", "M (Mature)", "An adventure with a Mii character cast of your choosing", 39.99, "Nintendo", 7)
+        );
+
+        expectedGameListByStudioAndEsrbRating = Arrays.asList(
+                new Game(1, "Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15)
+        );
+
+        expectedGame = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
+
+        inputtedGame = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
+
+        when(serviceLayer.getAllGames()).thenReturn(expectedGameList);
+        when(serviceLayer.getGamesByStudio("Nintendo")).thenReturn(expectedGameListByStudio);
+        when(serviceLayer.getGamesByEsrbRating("M (Mature)")).thenReturn(expectedGameListByEsrbRating);
+        when(serviceLayer.getGamesByStudioAndEsrbRating("Nintendo", "E (Everyone)")).thenReturn(expectedGameListByStudioAndEsrbRating);
+        when(serviceLayer.getGameByTitle("Nintendo Switch Sports")).thenReturn(Optional.of(expectedGame));
+        when(serviceLayer.getSingleGame(13)).thenReturn(Optional.of(expectedGame));
+        when(serviceLayer.addGame(inputtedGame)).thenReturn(expectedGame);
 
     }
 
@@ -46,16 +89,7 @@ public class GameControllerTest {
 
     @Test
     public void shouldReturnListOfAllGamesAndStatus200() throws Exception {
-
-        List<Game> expectedGameList = Arrays.asList(
-                new Game(1, "Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15),
-                new Game(2, "Miitopia", "M (Mature)", "An adventure with a Mii character cast of your choosing", 39.99, "Nintendo", 7),
-                new Game(3, "Halo Infinite", "T (Teen)", "Experience the ultimate gameplay and explore a stunning sci-fi world in this riveting, first person shooter video game.", 39.99, "Xbox Game Studios", 5)
-        );
-
-        String expectedJson = mapper.writeValueAsString(expectedGameList);
-
-        when(serviceLayer.getAllGames()).thenReturn(expectedGameList);
+        expectedJson = mapper.writeValueAsString(expectedGameList);
 
         mockMvc.perform(get("/games"))
                 .andDo(print())
@@ -65,14 +99,7 @@ public class GameControllerTest {
 
     @Test
     public void shouldReturnListOfGamesFilteredByStudioAndStatus200() throws Exception {
-        List<Game> expectedGameListByStudio = Arrays.asList(
-                new Game(1, "Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15),
-                new Game(2, "Miitopia", "M (Mature)", "An adventure with a Mii character cast of your choosing", 39.99, "Nintendo", 7)
-        );
-
-        String expectedJson = mapper.writeValueAsString(expectedGameListByStudio);
-
-        when(serviceLayer.getGamesByStudio("Nintendo")).thenReturn(expectedGameListByStudio);
+        expectedJson = mapper.writeValueAsString(expectedGameListByStudio);
 
         mockMvc.perform(get("/games?studio=Nintendo"))
                 .andDo(print())
@@ -82,13 +109,7 @@ public class GameControllerTest {
 
     @Test
     public void shouldReturnListOfGamesFilteredByEsrbRatingAndStatus200() throws Exception {
-        List<Game> expectedGameListByEsrbRating = Arrays.asList(
-                new Game(2, "Miitopia", "M (Mature)", "An adventure with a Mii character cast of your choosing", 39.99, "Nintendo", 7)
-        );
-
-        String expectedJson = mapper.writeValueAsString(expectedGameListByEsrbRating);
-
-        when(serviceLayer.getGamesByEsrbRating("M (Mature)")).thenReturn(expectedGameListByEsrbRating);
+        expectedJson = mapper.writeValueAsString(expectedGameListByEsrbRating);
 
         mockMvc.perform(get("/games?esrbRating=M (Mature)"))
                 .andDo(print())
@@ -98,13 +119,7 @@ public class GameControllerTest {
 
     @Test
     public void shouldReturnListOfGamesFilteredByStudioAndEsrbRatingAndStatus200() throws Exception {
-        List<Game> expectedGameListByStudioAndEsrbRating = Arrays.asList(
-                new Game(1, "Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15)
-        );
-
-        String expectedJson = mapper.writeValueAsString(expectedGameListByStudioAndEsrbRating);
-
-        when(serviceLayer.getGamesByStudioAndEsrbRating("Nintendo", "E (Everyone)")).thenReturn(expectedGameListByStudioAndEsrbRating);
+        expectedJson = mapper.writeValueAsString(expectedGameListByStudioAndEsrbRating);
 
         mockMvc.perform(get("/games?studio=Nintendo&esrbRating=E (Everyone)"))
                 .andDo(print())
@@ -114,10 +129,7 @@ public class GameControllerTest {
 
     @Test
     public void shouldReturnGameByTitleAndStatus200() throws Exception {
-        Game expectedGame = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-        String expectedJson = mapper.writeValueAsString(expectedGame);
-
-        when(serviceLayer.getGameByTitle("Nintendo Switch Sports")).thenReturn(Optional.of(expectedGame));
+        expectedJson = mapper.writeValueAsString(expectedGame);
 
         mockMvc.perform(get("/games/title/Nintendo Switch Sports"))
                 .andDo(print())
@@ -127,10 +139,7 @@ public class GameControllerTest {
 
     @Test
     public void shouldReturnGameByIdAndStatus200() throws Exception {
-        Game expectedGame = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-        String expectedJson = mapper.writeValueAsString(expectedGame);
-
-        when(serviceLayer.getSingleGame(13)).thenReturn(Optional.of(expectedGame));
+        expectedJson = mapper.writeValueAsString(expectedGame);
 
         mockMvc.perform(get("/games/13"))
                 .andDo(print())
@@ -157,13 +166,8 @@ public class GameControllerTest {
     /* --------------------------------- HAPPY PATHS -------------------------------- */
     @Test
     public void shouldReturnGameOnPostRequestAndStatus201() throws Exception {
-        Game expectedGame = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-        Game inputtedGame = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-
-        String expectedJson = mapper.writeValueAsString(expectedGame);
-        String inputtedJson = mapper.writeValueAsString(inputtedGame);
-
-        when(serviceLayer.addGame(inputtedGame)).thenReturn(expectedGame);
+        expectedJson = mapper.writeValueAsString(expectedGame);
+        inputtedJson = mapper.writeValueAsString(inputtedGame);
 
         mockMvc.perform(post("/games")
                     .content(inputtedJson)
@@ -181,10 +185,10 @@ public class GameControllerTest {
         invalidRequestBody.put("title", "FakeGameTitle1223");
         invalidRequestBody.put("releaseData", "2022-10-12");
 
-        String inputJson = mapper.writeValueAsString(invalidRequestBody);
+        inputtedJson = mapper.writeValueAsString(invalidRequestBody);
 
         mockMvc.perform(post("/games")
-                        .content(inputJson)
+                        .content(inputtedJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
@@ -194,11 +198,10 @@ public class GameControllerTest {
     /* --------------------------------- HAPPY PATHS -------------------------------- */
     @Test
     public void shouldRespondWithStatus204WithValidPutRequest() throws Exception {
-        Game inputGame = new Game(13,"Nintendo Switch Sports", "M (Mature)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-        String inputJson = mapper.writeValueAsString(inputGame);
-        
+        inputtedJson = mapper.writeValueAsString(inputtedGame);
+
         mockMvc.perform(put("/games/13")
-                    .content(inputJson)
+                    .content(inputtedJson)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNoContent());
@@ -206,12 +209,10 @@ public class GameControllerTest {
     /* ---------------------------------- SAD PATHS --------------------------------- */
     @Test
     public void shouldReturn422StatusCodeIfGameIdsDoNotMatch() throws Exception {
-        Game inputGame = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-
-        String inputJson = mapper.writeValueAsString(inputGame);
+        inputtedJson = mapper.writeValueAsString(inputtedGame);
 
         mockMvc.perform(put("/games/100")
-                    .content(inputJson)
+                    .content(inputtedJson)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
@@ -223,10 +224,10 @@ public class GameControllerTest {
         invalidRequestBody.put("title", "FakeGameTitle1223");
         invalidRequestBody.put("releaseData", "2022-10-12");
 
-        String inputJson = mapper.writeValueAsString(invalidRequestBody);
+        inputtedJson = mapper.writeValueAsString(invalidRequestBody);
 
         mockMvc.perform(put("/games/136")
-                    .content(inputJson)
+                    .content(inputtedJson)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
