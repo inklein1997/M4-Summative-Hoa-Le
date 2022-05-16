@@ -20,22 +20,28 @@ public class GameRepositoryTest {
     @Autowired
     GameRepository gameRepository;
 
+    private Game game;
+    private Game anotherGame;
+    private List<Game> expectedGameList = new ArrayList<>();
+
     @Before
     public void setUp() {
         gameRepository.deleteAll();
+
+        game = gameRepository.save(new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15));
+        anotherGame = gameRepository.save(new Game(2, "Miitopia", "M (Mature)", "An adventure with a Mii character cast of your choosing", 39.99, "Nintendo", 7));
+
+        expectedGameList.clear();
     }
 
     /* ------------------ Happy Paths ------------------ */
     @Test
     public void addGetDeleteGame() {
-        Game game = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-        gameRepository.save(game);
         Optional<Game> game1 = gameRepository.findById(game.getGame_id());
-
-        assertEquals(game1, game);
+        
+        assertEquals(game1.get(), game);
 
         gameRepository.deleteById(game.getGame_id());
-
         game1 = gameRepository.findById(game.getGame_id());
 
         assertFalse(game1.isPresent());
@@ -43,43 +49,27 @@ public class GameRepositoryTest {
 
     @Test
     public void updateGame() {
-        Game game = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-
-        game = gameRepository.save(game);
-
         game.setDescription("New description");
-
         gameRepository.save(game);
-
         Optional<Game> game1 = gameRepository.findById(game.getGame_id());
+
         assertEquals(game1.get(), game);
     }
 
     @Test
     public void getAllGames() {
-        Game game = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-        Game anotherGame = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
+        expectedGameList.add(game);
+        expectedGameList.add(anotherGame);
 
-        game = gameRepository.save(game);
-        anotherGame = gameRepository.save(anotherGame);
+        List<Game> actualGameList = gameRepository.findAll();
 
-        List<Game> gameList = gameRepository.findAll();
-        assertEquals(gameList.size(), 2);
+        assertEquals(actualGameList.size(), 2);
+        assertEquals(expectedGameList, actualGameList);
     }
 
     @Test
     public void getGamesByEsrbRating() {
-        Game game = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-        Game anotherGame = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-
-        game = gameRepository.save(game);
-        anotherGame = gameRepository.save(anotherGame);
-
-        List<Game> expectedGameList = new ArrayList<>();
-
         expectedGameList.add(game);
-        expectedGameList.add(anotherGame);
-
 
         List<Game> actualGameList = gameRepository.findByEsrbRating("E (Everyone)");
 
@@ -89,17 +79,8 @@ public class GameRepositoryTest {
 
     @Test
     public void getGamesByStudio() {
-        Game game = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-        Game anotherGame = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-
-        game = gameRepository.save(game);
-        anotherGame = gameRepository.save(anotherGame);
-
-        List<Game> expectedGameList = new ArrayList<>();
-
         expectedGameList.add(game);
         expectedGameList.add(anotherGame);
-
 
         List<Game> actualGameList = gameRepository.findByStudio("Nintendo");
 
@@ -108,17 +89,7 @@ public class GameRepositoryTest {
 
     @Test
     public void getGamesByEsrbRatingAndStudio() {
-        Game game = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-        Game anotherGame = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-
-        game = gameRepository.save(game);
-        anotherGame = gameRepository.save(anotherGame);
-
-        List<Game> expectedGameList = new ArrayList<>();
-
         expectedGameList.add(game);
-        expectedGameList.add(anotherGame);
-
 
         List<Game> actualGameList = gameRepository.findByStudioAndEsrbRating("Nintendo", "E (Everyone)");
 
@@ -127,13 +98,9 @@ public class GameRepositoryTest {
 
     @Test
     public void getGameByTitle() {
-        Game game = new Game("Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
-
-        game = gameRepository.save(game);
-        
         Optional<Game> actualGame = gameRepository.findByTitle("Nintendo Switch Sports");
 
-        assertEquals(game, actualGame);
+        assertEquals(game, actualGame.get());
     }
 
 }
