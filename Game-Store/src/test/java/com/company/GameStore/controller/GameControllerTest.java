@@ -9,16 +9,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -28,6 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(GameController.class)
 public class GameControllerTest {
 
+    @MockBean
+    ServiceLayer serviceLayer;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -35,6 +37,7 @@ public class GameControllerTest {
 
     @Before
     public void setUp() {
+        serviceLayer.clearDatabase();
 
     }
 
@@ -52,6 +55,8 @@ public class GameControllerTest {
 
         String expectedJson = mapper.writeValueAsString(expectedGameList);
 
+        when(serviceLayer.getAllGames()).thenReturn(expectedGameList);
+
         mockMvc.perform(get("/games"))
                 .andDo(print())
                 .andExpect(content().json(expectedJson))
@@ -67,6 +72,8 @@ public class GameControllerTest {
 
         String expectedJson = mapper.writeValueAsString(expectedGameListByStudio);
 
+        when(serviceLayer.getGamesByStudio("Nintendo")).thenReturn(expectedGameListByStudio);
+
         mockMvc.perform(get("/games?studio=Nintendo"))
                 .andDo(print())
                 .andExpect(content().json(expectedJson))
@@ -80,6 +87,8 @@ public class GameControllerTest {
         );
 
         String expectedJson = mapper.writeValueAsString(expectedGameListByEsrbRating);
+
+        when(serviceLayer.getGamesByEsrbRating("M (Mature)")).thenReturn(expectedGameListByEsrbRating);
 
         mockMvc.perform(get("/games?esrbRating=M (Mature)"))
                 .andDo(print())
@@ -95,6 +104,8 @@ public class GameControllerTest {
 
         String expectedJson = mapper.writeValueAsString(expectedGameListByStudioAndEsrbRating);
 
+        when(serviceLayer.getGamesByStudioAndEsrbRating("Nintendo", "E (Everyone)")).thenReturn(expectedGameListByStudioAndEsrbRating);
+
         mockMvc.perform(get("/games?studio=Nintendo&esrbRating=E (Everyone)"))
                 .andDo(print())
                 .andExpect(content().json(expectedJson))
@@ -106,6 +117,8 @@ public class GameControllerTest {
         Game expectedGame = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
         String expectedJson = mapper.writeValueAsString(expectedGame);
 
+        when(serviceLayer.getGameByTitle("Nintendo Switch Sports")).thenReturn(Optional.of(expectedGame));
+
         mockMvc.perform(get("/games/title/Nintendo Switch Sports"))
                 .andDo(print())
                 .andExpect(content().json(expectedJson))
@@ -116,6 +129,8 @@ public class GameControllerTest {
     public void shouldReturnGameByIdAndStatus200() throws Exception {
         Game expectedGame = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
         String expectedJson = mapper.writeValueAsString(expectedGame);
+
+        when(serviceLayer.getSingleGame(13)).thenReturn(Optional.of(expectedGame));
 
         mockMvc.perform(get("/games/13"))
                 .andDo(print())
@@ -148,12 +163,14 @@ public class GameControllerTest {
         String expectedJson = mapper.writeValueAsString(expectedGame);
         String inputtedJson = mapper.writeValueAsString(inputtedGame);
 
+        when(serviceLayer.addGame(inputtedGame)).thenReturn(expectedGame);
+
         mockMvc.perform(post("/games")
                     .content(inputtedJson)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(content().json(expectedJson))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     /* ---------------------------------- SAD PATHS --------------------------------- */
@@ -179,7 +196,7 @@ public class GameControllerTest {
     public void shouldRespondWithStatus204WithValidPutRequest() throws Exception {
         Game inputGame = new Game(13,"Nintendo Switch Sports", "M (Mature)", "Class sports simulation video game", 49.99, "Nintendo", 15);
         String inputJson = mapper.writeValueAsString(inputGame);
-
+        
         mockMvc.perform(put("/games/13")
                     .content(inputJson)
                     .contentType(MediaType.APPLICATION_JSON))
