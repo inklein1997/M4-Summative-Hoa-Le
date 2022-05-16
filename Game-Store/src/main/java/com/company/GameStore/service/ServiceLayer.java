@@ -22,15 +22,9 @@ public class ServiceLayer {
     ConsoleRepository consoleRepository;
 
     @Autowired
-
-    public void ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository) {
-        this.gameRepository = gameRepository;
-        this.consoleRepository = consoleRepository;
-
-    public void ServiceLayer(GameRepository gameRepository, TshirtRepository tshirtRepository) {
+    public ServiceLayer(GameRepository gameRepository, TshirtRepository tshirtRepository) {
         this.gameRepository = gameRepository;
         this.tshirtRepository = tshirtRepository;
-
     }
 
     // CLEAR DATABASE
@@ -52,6 +46,7 @@ public class ServiceLayer {
     public void updateTshirt(Tshirt tshirt) {tshirtRepository.save(tshirt);}
 
     public void deleteTshirt(int id) {tshirtRepository.deleteById(id);}
+
     // GAME CRUD OPERATIONS
     public List<Game> getAllGames() {return gameRepository.findAll();}
 
@@ -79,7 +74,7 @@ public class ServiceLayer {
         gameRepository.deleteById(id);
     }
 
-
+    // CONSOLE CRUD OPERATIONS  
     public List<Console> getConsolesByManufacturer(String manufacturer) {
         return consoleRepository.findByManufacturer(manufacturer);
     }

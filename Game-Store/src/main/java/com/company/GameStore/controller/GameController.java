@@ -65,6 +65,7 @@ public class GameController {
         if (id != game.getGame_id()) {
             throw new DataIntegrityViolationException("Your request body ID does not match your Path Variable id");
         }
+
         service.updateGame(game);
     }
 
