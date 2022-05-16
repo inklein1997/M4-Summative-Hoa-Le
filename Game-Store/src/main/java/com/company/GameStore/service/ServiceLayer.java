@@ -5,7 +5,7 @@ import com.company.GameStore.DTO.Game;
 
 import com.company.GameStore.repository.ConsoleRepository;
 
-import com.company.GameStore.DTO.Tshir
+import com.company.GameStore.DTO.Tshirt;
 import com.company.GameStore.repository.GameRepository;
 import com.company.GameStore.repository.TshirtRepository;
 import org.springframework.beans.factory.annotation.Autowired;
