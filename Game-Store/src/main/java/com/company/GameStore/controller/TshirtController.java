@@ -22,7 +22,15 @@ public class TshirtController {
     //GET ALL
     @GetMapping("/tshirts")
     @ResponseStatus(HttpStatus.OK)
-    public List<Tshirt> getAllTshirt(){
+    public List<Tshirt> getAllTshirt(@RequestParam(required = false) String color,@RequestParam(required = false) String size){
+
+        if (color != null && size != null){
+            return service.getTshirtByColorAndSize(color, size);
+        } else if (color != null) {
+            return service.getTshirtByColor(color);
+        } else if (size != null) {
+            return service.getTshirtBySize(size);
+        }
         return service.getAllTshirt();
     }
 
@@ -33,7 +41,7 @@ public class TshirtController {
         return service.getSingleTshirt(id);
     }
 
-    //POST/CREATE Tshirt
+    ////
     @PostMapping("/tshirts")
     @ResponseStatus(HttpStatus.CREATED)
     public  Tshirt createTshirt(@RequestBody @Valid Tshirt tshirt){
@@ -50,7 +58,7 @@ public class TshirtController {
             tshirt.setId(id);
         }
         if(id != tshirt.getId()){
-            throw new DataIntegrityViolationException("Id does not match @PathVariable id");
+            throw new DataIntegrityViolationException("Id does not match PathVariable id");
         }
         service.updateTshirt(tshirt);
     }

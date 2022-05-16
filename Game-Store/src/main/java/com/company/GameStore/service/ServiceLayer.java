@@ -32,6 +32,7 @@ public class ServiceLayer {
     //Jpa Searches
     public List<Tshirt> getTshirtByColor(String color){return tshirtRepository.findByColor(color);}
     public List<Tshirt> getTshirtBySize(String size){return tshirtRepository.findBySize(size);}
+    public List<Tshirt> getTshirtByColorAndSize(String color, String size){return tshirtRepository.findByColorAndSize(color,size);}
 
     //TShirt CRUD
     public List<Tshirt> getAllTshirt(){return tshirtRepository.findAll();}
