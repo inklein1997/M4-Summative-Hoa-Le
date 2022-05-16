@@ -1,6 +1,8 @@
 package com.company.GameStore.controller;
 
 import com.company.GameStore.DTO.CustomErrorResponse;
+import com.company.GameStore.exception.QueryNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 
+// Bulk of code taken from 2U Java Bootcamp Curriculum
 @RestControllerAdvice
 public class ControllerExceptionHandler {
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
@@ -61,6 +64,28 @@ public class ControllerExceptionHandler {
 //        error.setErrorCode("422 UNPROCESSABLE_ENTITY");
 //        error.setErrorMsg("Number Value only");
         ResponseEntity<CustomErrorResponse> responseEntity = new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+        return responseEntity;
+    }
+
+    // Is thrown whenever ID in request body does not match ID in Path Variable
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ResponseEntity<CustomErrorResponse> mismatchingIdsInReqBodyAndPathVar(DataIntegrityViolationException e) {
+        CustomErrorResponse error = new CustomErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.toString(), e.getMessage());
+        error.setStatus((HttpStatus.UNPROCESSABLE_ENTITY.value()));
+        error.setTimestamp(LocalDateTime.now());
+        ResponseEntity<CustomErrorResponse> responseEntity = new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+        return responseEntity;
+    }
+
+    // Is thrown when query does not match anything in database
+    @ExceptionHandler(value = QueryNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<CustomErrorResponse> queryNotFoundInDatabase(QueryNotFoundException e) {
+        CustomErrorResponse error = new CustomErrorResponse(HttpStatus.NOT_FOUND.toString(), e.getMessage());
+        error.setStatus((HttpStatus.NOT_FOUND.value()));
+        error.setTimestamp(LocalDateTime.now());
+        ResponseEntity<CustomErrorResponse> responseEntity = new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         return responseEntity;
     }
 }

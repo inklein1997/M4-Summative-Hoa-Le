@@ -1,12 +1,14 @@
 package com.company.GameStore.controller;
 
 import com.company.GameStore.DTO.Game;
+import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.service.ServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,19 +43,22 @@ public class GameController {
     @GetMapping("/games/title/{title}")
     @ResponseStatus(HttpStatus.OK)
     public Optional<Game> getGameByTitle(@PathVariable String title) {
+        if (service.getGameByTitle(title).orElse(null) == null) {
+            throw new QueryNotFoundException("No game with that title exists in our inventory.");
+        }
         return service.getGameByTitle(title);
     }
 
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
-    public Game createGame(@RequestBody Game game) {
+    public Game createGame(@Valid @RequestBody Game game) {
         System.out.println(game);
         return service.addGame(game);
     }
 
     @PutMapping("/games/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateGame(@RequestBody Game game, @PathVariable int id) {
+    public void updateGame(@Valid @RequestBody Game game, @PathVariable int id) {
         if (game.getGame_id() == null) {
             game.setGame_id(id);
         }
