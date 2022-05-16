@@ -36,7 +36,10 @@ public class ServiceLayer {
 
     //TShirt CRUD
     public List<Tshirt> getAllTshirt(){return tshirtRepository.findAll();}
-    public Optional<Tshirt> getSingleTshirt(int id) {return tshirtRepository.findById(id);}
+    public Optional<Tshirt> getSingleTshirt(int id) {
+        Optional<Tshirt> tshirt = tshirtRepository.findById(id);
+        return tshirt.isPresent()? Optional.of(tshirt.get()) : null;
+    }
     public Tshirt addTshirt(Tshirt tshirt) {return tshirtRepository.save(tshirt);}
 
     public void updateTshirt(Tshirt tshirt) {tshirtRepository.save(tshirt);}

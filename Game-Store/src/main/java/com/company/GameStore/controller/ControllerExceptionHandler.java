@@ -1,6 +1,7 @@
 package com.company.GameStore.controller;
 
 import com.company.GameStore.DTO.CustomErrorResponse;
+import com.company.GameStore.exception.NoRecordFoundException;
 import com.company.GameStore.exception.QueryNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -82,6 +83,15 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = QueryNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<CustomErrorResponse> queryNotFoundInDatabase(QueryNotFoundException e) {
+        CustomErrorResponse error = new CustomErrorResponse(HttpStatus.NOT_FOUND.toString(), e.getMessage());
+        error.setStatus((HttpStatus.NOT_FOUND.value()));
+        error.setTimestamp(LocalDateTime.now());
+        ResponseEntity<CustomErrorResponse> responseEntity = new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        return responseEntity;
+    }
+    @ExceptionHandler(value = NoRecordFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<CustomErrorResponse> IdNotFoundInDatabase(NoRecordFoundException e) {
         CustomErrorResponse error = new CustomErrorResponse(HttpStatus.NOT_FOUND.toString(), e.getMessage());
         error.setStatus((HttpStatus.NOT_FOUND.value()));
         error.setTimestamp(LocalDateTime.now());
