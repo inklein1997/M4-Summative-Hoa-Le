@@ -155,12 +155,12 @@ public class GameControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void shouldReturn404StatusCodeIfGameIdDoesNotExist() throws Exception {
-//        mockMvc.perform(get("/games/10023"))
-//                .andDo(print())
-//                .andExpect(status().isNotFound());
-//    }
+    @Test
+    public void shouldReturn404StatusCodeIfGameIdDoesNotExist() throws Exception {
+        mockMvc.perform(get("/games/10023"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
     /* ============================= TESTING POST ROUTES ============================= */
     /* --------------------------------- HAPPY PATHS -------------------------------- */
@@ -233,7 +233,7 @@ public class GameControllerTest {
                 .andExpect(status().isUnprocessableEntity());
     }
 
-    /* ============================= TESTING PUT ROUTES ============================= */
+    /* ============================= TESTING DELETE ROUTES ============================= */
     /* --------------------------------- HAPPY PATHS -------------------------------- */
     @Test
     public void shouldRespondWithStatus204WithValidDeleteRequest() throws Exception {
@@ -243,10 +243,10 @@ public class GameControllerTest {
     }
 
     /* ---------------------------------- SAD PATHS --------------------------------- */
-//    @Test public void shouldResponseWithStatus404IfGameIdIsNotFoundForDelete() throws Exception {
-//        mockMvc.perform(delete("/games/1412"))
-//                .andDo(print())
-//                .andExpect(status().isNotFound());
-//    }
+    @Test public void shouldResponseWithStatus404IfGameIdIsNotFoundForDelete() throws Exception {
+        mockMvc.perform(delete("/games/1412"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
 }
