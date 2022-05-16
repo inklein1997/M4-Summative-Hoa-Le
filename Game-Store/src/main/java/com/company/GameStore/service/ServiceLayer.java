@@ -1,5 +1,6 @@
 package com.company.GameStore.service;
 
+import com.company.GameStore.DTO.Console;
 import com.company.GameStore.DTO.Game;
 import com.company.GameStore.DTO.Tshirt;
 import com.company.GameStore.repository.GameRepository;
@@ -68,4 +69,29 @@ public class ServiceLayer {
     }
 
 
+    public Optional<Console> getConsoleByManufacturer(String manufacturer) {
+        return null;
+    }
+
+    public List<Console> getConsolesByManufacturer(String manufacturer) {
+        return null;
+    }
+
+    public List<Console> getAllConsoles() {
+        return null;
+    }
+
+    public Optional<Console> getSingleConsole(int id) {
+        return null;
+    }
+
+    public Console addConsole(Console console) {
+        return console;
+    }
+
+    public void updateConsole(Console console) {
+    }
+
+    public void deleteConsole(int id) {
+    }
 }
