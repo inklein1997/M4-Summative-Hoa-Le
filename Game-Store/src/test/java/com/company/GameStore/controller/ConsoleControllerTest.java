@@ -121,7 +121,7 @@ public class ConsoleControllerTest {
 
         // ACT
         mockMvc.perform(
-                        post("/records")
+                        post("/consoles")
                                 .content(inputJson)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -130,7 +130,45 @@ public class ConsoleControllerTest {
                 .andExpect(content().json(outputJson));
     }
 
+    // testing PUT /consoles/{id}
+    @Test
+    public void shouldUpdateByIdAndReturn204StatusCode() throws Exception {
 
+        // ARRANGE
+        Console inputConsole = new Console();
+        inputConsole.setModel("ipod");
+        inputConsole.setManufacturer("Samsung");
+        inputConsole.setMemory_amount("900GB");
+        inputConsole.setProcessor("AMV rising 7");
+        inputConsole.setPrice(89.0);
+        inputConsole.setQuantity(40);
 
+        String inputJson = mapper.writeValueAsString(inputConsole);
+
+        // ACT
+        mockMvc.perform(
+                        put("/consoles/2")
+                                .content(inputJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        // ACT
+        mockMvc.perform(
+                        get("/consoles/2")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(content().json(inputJson));
+    }
+    // testing DELETE /consoles/{id}
+    @Test
+    public void shouldDeleteByIdAndReturn204StatusCode() throws Exception {
+
+        mockMvc.perform(delete("/consoles/3"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
 
 }
