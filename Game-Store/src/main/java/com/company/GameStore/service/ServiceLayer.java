@@ -68,7 +68,7 @@ public class ServiceLayer {
         gameRepository.deleteById(id);
     }
 
-
+    // CONSOLE CRUD OPERATIONS
     public Optional<Console> getConsoleByManufacturer(String manufacturer) {
         return null;
     }

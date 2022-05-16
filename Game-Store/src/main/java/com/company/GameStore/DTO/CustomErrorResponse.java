@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
 
+// Bulk of code taken from 2U Java Bootcamp Curriculum
 public class CustomErrorResponse {
     String errorCode;
     String errorMsg;

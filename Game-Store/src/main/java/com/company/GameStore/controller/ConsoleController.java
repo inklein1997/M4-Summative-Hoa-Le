@@ -50,7 +50,7 @@ public class ConsoleController {
     @PutMapping("/consoles/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateConsole(@RequestBody Console console, @PathVariable int id) {
-        if (console.getConsole_id() == null) {
+        if (console.getConsole_id() == 0) {
             console.setConsole_id(id);
         }
         if (id != console.getConsole_id()) {
