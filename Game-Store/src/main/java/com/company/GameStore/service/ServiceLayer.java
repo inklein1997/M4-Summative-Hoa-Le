@@ -42,6 +42,7 @@ public class ServiceLayer {
     public void updateTshirt(Tshirt tshirt) {tshirtRepository.save(tshirt);}
 
     public void deleteTshirt(int id) {tshirtRepository.deleteById(id);}
+
     // GAME CRUD OPERATIONS
     public List<Game> getAllGames() {return gameRepository.findAll();}
 

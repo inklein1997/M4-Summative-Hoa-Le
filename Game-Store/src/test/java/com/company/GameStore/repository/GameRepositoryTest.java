@@ -38,7 +38,7 @@ public class GameRepositoryTest {
     @Test
     public void addGetDeleteGame() {
         Optional<Game> game1 = gameRepository.findById(game.getGame_id());
-        
+
         assertEquals(game1.get(), game);
 
         gameRepository.deleteById(game.getGame_id());
