@@ -30,9 +30,7 @@ public class ConsoleControllerTest {
 
     @Before
     public void setUp() {
-        // This is the standard set up method that runs before each test. It's typically used for instantiating test
-        // objects. We don't have to do anything special for mockMvc since it's Autowired. We will however be using
-        // setUp() in the future.
+
     }
 
 
@@ -40,15 +38,9 @@ public class ConsoleControllerTest {
     @Test
     public void shouldReturnAllConsoles() throws Exception {
 
-
-
-        // ARRANGE and ACT
-        mockMvc.perform(get("/consoles"))       // Perform the GET request.
-                .andDo(print())                          // Print results to console.
-                .andExpect(status().isOk())              // ASSERT (status code is 200)
-
-                // ASSERT that the JSON array is present and not empty. We will test GET all endpoints deeper in the
-                // future but this is good enough for now.
+        mockMvc.perform(get("/consoles"))
+                .andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0]").isNotEmpty());
     }
 
@@ -71,8 +63,8 @@ public class ConsoleControllerTest {
         // ACT
         mockMvc.perform(get("/consoles/1"))
                 .andDo(print())
-                .andExpect(status().isOk())                     // ASSERT that we got back 200 OK.
-                .andExpect(content().json(outputJson));         // ASSERT that what we're expecting is what we got back.
+                .andExpect(status().isOk())
+                .andExpect(content().json(outputJson));
     }
 
     // testing GET /consoles/manufacturer/{manufacturer}
@@ -95,9 +87,88 @@ public class ConsoleControllerTest {
         // ACT
         mockMvc.perform(get("/consoles/manufacturer/{manufacturer}"))
                 .andDo(print())
-                .andExpect(status().isOk())                     // ASSERT that we got back 200 OK.
-                .andExpect(content().json(outputJson));         // ASSERT that what we're expecting is what we got back.
+                .andExpect(status().isOk())
+                .andExpect(content().json(outputJson));
     }
 
+    // Testing POST /consoles
+    @Test
+    public void shouldReturnNewRecordOnPostRequest() throws Exception {
+
+        // ARRANGE
+        Console inputConsole = new Console();
+        inputConsole.setModel("ipod");
+        inputConsole.setManufacturer("Samsung");
+        inputConsole.setMemory_amount("900GB");
+        inputConsole.setProcessor("AMV rising 7");
+        inputConsole.setPrice(89.0);
+        inputConsole.setQuantity(40);
+
+
+        // Convert Java Object to JSON.
+        String inputJson = mapper.writeValueAsString(inputConsole);
+
+        Console outputConsole = new Console();
+        outputConsole.setConsole_id(2);
+        outputConsole.setModel("ipod");
+        outputConsole.setManufacturer("Samsung");
+        outputConsole.setMemory_amount("900GB");
+        outputConsole.setProcessor("AMV rising 7");
+        outputConsole.setPrice(89.0);
+        outputConsole.setQuantity(40);
+
+        String outputJson = mapper.writeValueAsString(outputConsole);
+
+        // ACT
+        mockMvc.perform(
+                        post("/consoles")
+                                .content(inputJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().json(outputJson));
+    }
+
+    // testing PUT /consoles/{id}
+    @Test
+    public void shouldUpdateByIdAndReturn204StatusCode() throws Exception {
+
+        // ARRANGE
+        Console inputConsole = new Console();
+        inputConsole.setModel("ipod");
+        inputConsole.setManufacturer("Samsung");
+        inputConsole.setMemory_amount("900GB");
+        inputConsole.setProcessor("AMV rising 7");
+        inputConsole.setPrice(89.0);
+        inputConsole.setQuantity(40);
+
+        String inputJson = mapper.writeValueAsString(inputConsole);
+
+        // ACT
+        mockMvc.perform(
+                        put("/consoles/2")
+                                .content(inputJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        // ACT
+        mockMvc.perform(
+                        get("/consoles/2")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(content().json(inputJson));
+    }
+    // testing DELETE /consoles/{id}
+    @Test
+    public void shouldDeleteByIdAndReturn204StatusCode() throws Exception {
+
+        mockMvc.perform(delete("/consoles/3"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
 
 }
