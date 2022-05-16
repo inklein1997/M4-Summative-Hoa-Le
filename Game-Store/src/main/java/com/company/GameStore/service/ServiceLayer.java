@@ -2,8 +2,12 @@ package com.company.GameStore.service;
 
 import com.company.GameStore.DTO.Console;
 import com.company.GameStore.DTO.Game;
+
 import com.company.GameStore.repository.ConsoleRepository;
+
+import com.company.GameStore.DTO.Tshir
 import com.company.GameStore.repository.GameRepository;
+import com.company.GameStore.repository.TshirtRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,19 +17,43 @@ import java.util.Optional;
 @Service
 public class ServiceLayer {
 
+    TshirtRepository tshirtRepository;
     GameRepository gameRepository;
     ConsoleRepository consoleRepository;
 
     @Autowired
+
     public void ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository) {
         this.gameRepository = gameRepository;
         this.consoleRepository = consoleRepository;
+
+    public void ServiceLayer(GameRepository gameRepository, TshirtRepository tshirtRepository) {
+        this.gameRepository = gameRepository;
+        this.tshirtRepository = tshirtRepository;
+
     }
 
-    // GAME CRUD OPERATIONS
-    public List<Game> getAllGames() {
-        return gameRepository.findAll();
+    // CLEAR DATABASE
+    public void clearDatabase() {
+        gameRepository.deleteAll();
+        tshirtRepository.deleteAll();
     }
+
+    //Jpa Searches
+    public List<Tshirt> getTshirtByColor(String color){return tshirtRepository.findByColor(color);}
+    public List<Tshirt> getTshirtBySize(String size){return tshirtRepository.findBySize(size);}
+    public List<Tshirt> getTshirtByColorAndSize(String color, String size){return tshirtRepository.findByColorAndSize(color,size);}
+
+    //TShirt CRUD
+    public List<Tshirt> getAllTshirt(){return tshirtRepository.findAll();}
+    public Optional<Tshirt> getSingleTshirt(int id) {return tshirtRepository.findById(id);}
+    public Tshirt addTshirt(Tshirt tshirt) {return tshirtRepository.save(tshirt);}
+
+    public void updateTshirt(Tshirt tshirt) {tshirtRepository.save(tshirt);}
+
+    public void deleteTshirt(int id) {tshirtRepository.deleteById(id);}
+    // GAME CRUD OPERATIONS
+    public List<Game> getAllGames() {return gameRepository.findAll();}
 
     public List<Game> getGamesByStudio(String studio) { return gameRepository.findByStudio(studio); }
 
@@ -51,10 +79,6 @@ public class ServiceLayer {
         gameRepository.deleteById(id);
     }
 
-
-    public Optional<List<Console>> getConsoleByManufacturer(String manufacturer) {
-        return null;
-    }
 
     public List<Console> getConsolesByManufacturer(String manufacturer) {
         return consoleRepository.findByManufacturer(manufacturer);
