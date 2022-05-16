@@ -25,7 +25,7 @@ public class Console {
     @Size(max = 50)
     private String manufacturer;
     @Size(max = 20)
-    private int memory_amount;
+    private String memory_amount;
     @Size(max = 20)
     private String processor;
     @NotNull
@@ -34,7 +34,10 @@ public class Console {
     @NotNull
     private int quantity;
 
-    public Console(int console_id, String model, String manufacturer, int memory_amount, String processor, double price, int quantity) {
+    public Console() {
+    }
+
+    public Console(int console_id, String model, String manufacturer, String memory_amount, String processor, double price, int quantity) {
         this.console_id = console_id;
         this.model = model;
         this.manufacturer = manufacturer;
@@ -68,11 +71,11 @@ public class Console {
         this.manufacturer = manufacturer;
     }
 
-    public int getMemory_amount() {
+    public String getMemory_amount() {
         return memory_amount;
     }
 
-    public void setMemory_amount(int memory_amount) {
+    public void setMemory_amount(String memory_amount) {
         this.memory_amount = memory_amount;
     }
 

@@ -2,7 +2,10 @@ package com.company.GameStore.service;
 
 import com.company.GameStore.DTO.Console;
 import com.company.GameStore.DTO.Game;
-import com.company.GameStore.DTO.Tshirt;
+
+import com.company.GameStore.repository.ConsoleRepository;
+
+import com.company.GameStore.DTO.Tshir
 import com.company.GameStore.repository.GameRepository;
 import com.company.GameStore.repository.TshirtRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ public class ServiceLayer {
 
     TshirtRepository tshirtRepository;
     GameRepository gameRepository;
+    ConsoleRepository consoleRepository;
 
     @Autowired
     public ServiceLayer(GameRepository gameRepository, TshirtRepository tshirtRepository) {
@@ -70,25 +74,21 @@ public class ServiceLayer {
         gameRepository.deleteById(id);
     }
 
-    // CONSOLE CRUD OPERATIONS
-    public Optional<Console> getConsoleByManufacturer(String manufacturer) {
-        return null;
-    }
-
+    // CONSOLE CRUD OPERATIONS  
     public List<Console> getConsolesByManufacturer(String manufacturer) {
-        return null;
+        return consoleRepository.findByManufacturer(manufacturer);
     }
 
-    public List<Console> getAllConsoles() {
-        return null;
+    public List<Console> getAllConsoles(){
+        return consoleRepository.findAll();
     }
 
     public Optional<Console> getSingleConsole(int id) {
-        return null;
+        return consoleRepository.findById(id);
     }
 
     public Console addConsole(Console console) {
-        return console;
+        return consoleRepository.save(console);
     }
 
     public void updateConsole(Console console) {
@@ -96,4 +96,6 @@ public class ServiceLayer {
 
     public void deleteConsole(int id) {
     }
+
+
 }

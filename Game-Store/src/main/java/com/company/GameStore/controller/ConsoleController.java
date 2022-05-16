@@ -28,16 +28,16 @@ public class ConsoleController {
     @GetMapping("/consoles/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Optional<Console> getConsole(@PathVariable int id, @RequestParam(required = false) String manufacturer) {
-        if (manufacturer != null) {
-            return service.getConsoleByManufacturer(manufacturer);
+        if (id != 0) {
+            return service.getSingleConsole(id);
         }
-        return service.getSingleConsole(id);
+        return null;
     }
 
     @GetMapping("/consoles/manufacturer/{manufacturer}")
     @ResponseStatus(HttpStatus.OK)
-    public Optional<Console> getConsoleByManufacturer(@PathVariable String manufacturer) {
-        return service.getConsoleByManufacturer(manufacturer);
+    public List<Console> getConsoleByManufacturer(@PathVariable String manufacturer) {
+        return service.getConsolesByManufacturer(manufacturer);
     }
 
     @PostMapping("/consoles")
