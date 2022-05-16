@@ -36,24 +36,64 @@ public class ConsoleControllerTest {
     }
 
 
-    // testing GET record/{id}
+    // testing GET /consoles
     @Test
     public void shouldReturnAllConsoles() throws Exception {
 
-        // ARRANGE
-        Consoles outputConsoles = new Consoles();
-        outputConsoles.setId();
-        outputConsoles.setModel();
-        outputConsoles.setManufacturer();
-        outputConsoles.setMemoryAmount();
-        outputConsoles.setProcessor();
-        outputConsoles.setPrice();
-        outputConsoles.setQuantity();
 
-        String outputJson = mapper.writeValueAsString(outputConsoles);
+
+        // ARRANGE and ACT
+        mockMvc.perform(get("/consoles"))       // Perform the GET request.
+                .andDo(print())                          // Print results to console.
+                .andExpect(status().isOk())              // ASSERT (status code is 200)
+
+                // ASSERT that the JSON array is present and not empty. We will test GET all endpoints deeper in the
+                // future but this is good enough for now.
+                .andExpect(jsonPath("$[0]").isNotEmpty());
+    }
+
+
+    //testing GET /consoles/{id}
+    @Test
+    public void shouldReturnConsoleById() throws Exception {
+// ARRANGE
+        Console outputConsole = new Console();
+        outputConsole.setConsole_id(1);
+        outputConsole.setModel("ipod");
+        outputConsole.setManufacturer("Samsung");
+        outputConsole.setMemory_amount("500GB");
+        outputConsole.setProcessor("AMV rising 7");
+        outputConsole.setPrice(59.0);
+        outputConsole.setQuantity(80);
+
+        String outputJson = mapper.writeValueAsString(outputConsole);
 
         // ACT
         mockMvc.perform(get("/consoles/1"))
+                .andDo(print())
+                .andExpect(status().isOk())                     // ASSERT that we got back 200 OK.
+                .andExpect(content().json(outputJson));         // ASSERT that what we're expecting is what we got back.
+    }
+
+    // testing GET /consoles/manufacturer/{manufacturer}
+    @Test
+    public void shouldReturnConsoleByManufacturer() throws Exception {
+        // ARRANGE
+        Console outputConsole = new Console();
+        outputConsole.setConsole_id(1);
+        outputConsole.setModel("ipod");
+        outputConsole.setManufacturer("Samsung");
+        outputConsole.setMemory_amount("500GB");
+        outputConsole.setProcessor("AMV rising 7");
+        outputConsole.setPrice(59.0);
+        outputConsole.setQuantity(80);
+
+
+
+        String outputJson = mapper.writeValueAsString(outputConsole);
+
+        // ACT
+        mockMvc.perform(get("/consoles/manufacturer/{manufacturer}"))
                 .andDo(print())
                 .andExpect(status().isOk())                     // ASSERT that we got back 200 OK.
                 .andExpect(content().json(outputJson));         // ASSERT that what we're expecting is what we got back.
