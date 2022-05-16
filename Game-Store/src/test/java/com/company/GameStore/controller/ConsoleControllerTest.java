@@ -40,17 +40,7 @@ public class ConsoleControllerTest {
     @Test
     public void shouldReturnAllConsoles() throws Exception {
 
-        // ARRANGE
-        Console outputConsole = new Console();
-        outputConsole.setConsole_id(1);
-        outputConsole.setModel();
-        outputConsole.setManufacturer();
-        outputConsole.setMemory_amount();
-        outputConsole.setProcessor();
-        outputConsole.setPrice();
-        outputConsole.setQuantity();
 
-        String outputJson = mapper.writeValueAsString(outputConsole);
 
         // ARRANGE and ACT
         mockMvc.perform(get("/consoles"))       // Perform the GET request.
@@ -66,6 +56,15 @@ public class ConsoleControllerTest {
     //testing GET /consoles/{id}
     @Test
     public void shouldReturnConsoleById() throws Exception {
+// ARRANGE
+        Console outputConsole = new Console();
+        outputConsole.setConsole_id(1);
+        outputConsole.setModel("ipod");
+        outputConsole.setManufacturer("Samsung");
+        outputConsole.setMemory_amount("500GB");
+        outputConsole.setProcessor("AMV rising 7");
+        outputConsole.setPrice(59.0);
+        outputConsole.setQuantity(80);
 
         String outputJson = mapper.writeValueAsString(outputConsole);
 
@@ -79,6 +78,17 @@ public class ConsoleControllerTest {
     // testing GET /consoles/manufacturer/{manufacturer}
     @Test
     public void shouldReturnConsoleByManufacturer() throws Exception {
+        // ARRANGE
+        Console outputConsole = new Console();
+        outputConsole.setConsole_id(1);
+        outputConsole.setModel("ipod");
+        outputConsole.setManufacturer("Samsung");
+        outputConsole.setMemory_amount("500GB");
+        outputConsole.setProcessor("AMV rising 7");
+        outputConsole.setPrice(59.0);
+        outputConsole.setQuantity(80);
+
+
 
         String outputJson = mapper.writeValueAsString(outputConsole);
 
