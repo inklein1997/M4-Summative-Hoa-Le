@@ -5,10 +5,11 @@ import com.company.GameStore.service.ServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+//import org.springframework.http.converter.InputMismatchException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +38,7 @@ public class TshirtController {
     @ResponseStatus(HttpStatus.CREATED)
     public  Tshirt createTshirt(@RequestBody @Valid Tshirt tshirt){
 
-        try{return service.addTshirt(tshirt);}catch (HttpMessageNotReadableException e){
+        try{return service.addTshirt(tshirt);}catch (InputMismatchException e){
             throw e;
         }
     }
