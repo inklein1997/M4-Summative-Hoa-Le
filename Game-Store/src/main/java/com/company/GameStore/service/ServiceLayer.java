@@ -2,6 +2,7 @@ package com.company.GameStore.service;
 
 import com.company.GameStore.DTO.Console;
 import com.company.GameStore.DTO.Game;
+import com.company.GameStore.repository.ConsoleRepository;
 import com.company.GameStore.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,12 @@ import java.util.Optional;
 public class ServiceLayer {
 
     GameRepository gameRepository;
+    ConsoleRepository consoleRepository;
 
     @Autowired
-    public void ServiceLayer(GameRepository gameRepository) {
+    public void ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository) {
         this.gameRepository = gameRepository;
+        this.consoleRepository = consoleRepository;
     }
 
     // GAME CRUD OPERATIONS
@@ -49,24 +52,24 @@ public class ServiceLayer {
     }
 
 
-    public Optional<Console> getConsoleByManufacturer(String manufacturer) {
+    public Optional<List<Console>> getConsoleByManufacturer(String manufacturer) {
         return null;
     }
 
     public List<Console> getConsolesByManufacturer(String manufacturer) {
-        return null;
+        return consoleRepository.findByManufacturer(manufacturer);
     }
 
-    public List<Console> getAllConsoles() {
-        return null;
+    public List<Console> getAllConsoles(){
+        return consoleRepository.findAll();
     }
 
     public Optional<Console> getSingleConsole(int id) {
-        return null;
+        return consoleRepository.findById(id);
     }
 
     public Console addConsole(Console console) {
-        return console;
+        return consoleRepository.save(console);
     }
 
     public void updateConsole(Console console) {
@@ -74,4 +77,6 @@ public class ServiceLayer {
 
     public void deleteConsole(int id) {
     }
+
+
 }
