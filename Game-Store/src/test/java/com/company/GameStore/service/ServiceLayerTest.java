@@ -1,12 +1,14 @@
 package com.company.GameStore.service;
 
 import com.company.GameStore.DTO.Game;
+import com.company.GameStore.DTO.Invoice;
 import com.company.GameStore.repository.GameRepository;
 import com.company.GameStore.repository.InvoiceRepository;
 import com.company.GameStore.repository.TshirtRepository;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.swing.text.html.Option;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -27,10 +29,14 @@ public class ServiceLayerTest {
     private List<Game> actualGameList;
     private List<Game> expectedGameList;
 
+    private Invoice invoice1;
+    private Invoice invoice2;
+    private List<Invoice> invoiceList;
 
     @Before
     public void setUp() throws Exception {
         setUpGameRepositoryMock();
+        setUpInvoiceRepositoryMock();
 
         serviceLayer = new ServiceLayer(gameRepository, tshirtRepository, invoiceRepository);
     }
@@ -55,6 +61,21 @@ public class ServiceLayerTest {
         doReturn(Optional.of(game)).when(gameRepository).findById(1);
         doReturn(game).when(gameRepository).save(game);
     }
+
+    private void setUpInvoiceRepositoryMock() {
+        invoiceRepository = mock(InvoiceRepository.class);
+
+        invoice1 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        invoice2 = new Invoice(2, "Patrick Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Consoles", 1, 499.99, 2, 999.98, 80.00, 29.98, 1109.96);
+
+        invoiceList = Arrays.asList(invoice1, invoice2);
+
+        doReturn(invoiceList).when(invoiceRepository).findAll();
+        doReturn(Optional.of(invoice1)).when(invoiceRepository).findById(1);
+        doReturn(invoice1).when(invoiceRepository).save(invoice1);
+    }
+
+    /* --------------------------------- GAME SERVICE LAYER TESTS -------------------------------- */
 
     @Test
     public void shouldFindAllGames() {
@@ -122,5 +143,36 @@ public class ServiceLayerTest {
 
         assertEquals(expectedGame, savedGame);
     }
+
+    /* --------------------------------- INVOICE SERVICE LAYER TESTS -------------------------------- */
+
+    @Test
+    public void shouldFindAllInvoices() {
+        List<Invoice> expectedInvoiceList = Arrays.asList(
+            new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8),
+            new Invoice(2, "Patrick Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Consoles", 1, 499.99, 2, 999.98, 80.00, 29.98, 1109.96)
+        );
+
+        List<Invoice> actualInvoiceList = serviceLayer.getAllInvoices();
+
+        assertEquals(expectedInvoiceList, actualInvoiceList);
+    }
+
+    @Test
+    public void shouldFindInvoiceById() {
+        Invoice expectedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        Optional<Invoice> actualInvoice = serviceLayer.getInvoiceById(1);
+
+        assertEquals(expectedInvoice, actualInvoice.get());
+    }
+
+    @Test
+    public void shouldCreateInvoice() {
+        Invoice expectedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        Invoice savedInvoice = serviceLayer.addInvoice(new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8));
+
+        assertEquals(expectedInvoice, savedInvoice);
+    }
+
 
 }

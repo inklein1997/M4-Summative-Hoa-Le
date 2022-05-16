@@ -35,7 +35,7 @@ public class InvoiceController {
     @PostMapping("/invoices")
     @ResponseStatus(HttpStatus.CREATED)
     public Invoice createInvoice(@Valid @RequestBody Invoice invoice) {
-        return serviceLayer.createInvoice(invoice);
+        return serviceLayer.addInvoice(invoice);
     }
 
 }

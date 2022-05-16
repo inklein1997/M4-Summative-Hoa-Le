@@ -106,5 +106,6 @@ public class ServiceLayer {
         return invoiceRepository.findById(id);
     }
 
-    public Invoice createInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
+    public Invoice addInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
+
 }
