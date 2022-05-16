@@ -18,7 +18,7 @@ public class ServiceLayer {
     GameRepository gameRepository;
 
     @Autowired
-    public void ServiceLayer(GameRepository gameRepository, TshirtRepository tshirtRepository) {
+    public ServiceLayer(GameRepository gameRepository, TshirtRepository tshirtRepository) {
         this.gameRepository = gameRepository;
         this.tshirtRepository = tshirtRepository;
     }
