@@ -4,6 +4,7 @@ import com.company.GameStore.DTO.Tshirt;
 import com.company.GameStore.exception.NoRecordFoundException;
 import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.service.ServiceLayer;
+import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class TshirtController {
     @GetMapping("/tshirts/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Optional<Tshirt> getTshirtById(@PathVariable int id){
-        if (service.getSingleTshirt(id) == null)// clarify.
+        if (service.getSingleTshirt(id).orElse(null) == null)// clarify.
         {
             throw new NoRecordFoundException("Tshirt id " + id + " is not found.");
         }
@@ -51,12 +52,11 @@ public class TshirtController {
     @PostMapping("/tshirts")
     @ResponseStatus(HttpStatus.CREATED)
     public  Tshirt createTshirt(@RequestBody @Valid Tshirt tshirt){
-
-//        try{
+        try{
             return service.addTshirt(tshirt);
-//        }catch (InputMismatchException e){
-//            throw e;
-//        }
+        }catch (InputMismatchException e){
+            throw e;
+        }
     }
 
     @PutMapping("/tshirts/{id}")
@@ -74,6 +74,9 @@ public class TshirtController {
     @DeleteMapping("/tshirts/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTshirt(@PathVariable int id){
+        if (service.getSingleTshirt(id).orElse(null)==null){
+            throw new NoRecordFoundException("Tshirt record not found");
+        }
         service.deleteTshirt(id);
     }
 }
