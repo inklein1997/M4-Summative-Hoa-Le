@@ -56,21 +56,22 @@ public class ConsoleControllerTest {
 
     private void setUpMocksForGetRoutes() {
         expectedConsoleList = (List<Game>) Arrays.asList(
-                new Console();
-                new Console();
-                new Console();
-        );
+                new Console(2, "PS4", "Sony", "1TB", "Dual", "579.00", 50),
+                new Console(3, "Wii U", "Nintendo", "32GB", "Dual", "244.99", 60),
+                new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", "739.99", 65)
+
+                );
 
         expectedConsoleListByManufacturer = Arrays.asList(
-                new Console();
-                new Console();
+                new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", "739.99", 65)
+
         );
 
 
 
-        expectedConsole = new Console();
+        expectedConsole = new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", "739.99", 65);
 
-        inputtedConsole = new Console();
+        inputtedConsole = new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", "739.99", 65);
 
         when(serviceLayer.getAllConsoles()).thenReturn(expectedConsoleList);
         when(serviceLayer.getConsolesByManufacturer()).thenReturn(expectedConsoleListByManufacturer);
@@ -92,7 +93,7 @@ public class ConsoleControllerTest {
     }
 
     @Test
-    public void shouldReturnListOfGamesFilteredByStudioAndStatus200() throws Exception {
+    public void shouldReturnListOfConsolesFilteredByManufacturerAndStatus200() throws Exception {
         expectedJson = mapper.writeValueAsString(expectedConsoleListByManufacturer);
 
         mockMvc.perform(get("/consoles/manufacturer/Sony"))
