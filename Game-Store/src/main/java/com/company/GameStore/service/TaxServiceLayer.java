@@ -11,6 +11,10 @@ public class TaxServiceLayer {
     @Autowired
     SalesTaxRateRepository salesTaxRateRepository;
 
+    public SalesTaxRate findSalesTaxRateByState(String state) {
+        return salesTaxRateRepository.findByState(state);
+    }
+
     public void loadTaxes() {
         salesTaxRateRepository.deleteAll();
         salesTaxRateRepository.save(new SalesTaxRate("AL", .05));
