@@ -114,8 +114,6 @@ public class ServiceLayer {
         return invoiceRepository.findById(id);
     }
 
-
-    public Invoice addInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
     public void decreaseItemQuantity(Invoice invoice) {
         // You will have to use invoice.getItem_type to select your repository that you are going to use (switch case)
 
@@ -126,7 +124,6 @@ public class ServiceLayer {
         // remainingAmount = avaiableAmount - requestedAmount
         // Save the remainingAmount on the item (Console/Game/Tshirt)
     }
-}
 
     public Invoice addInvoice(Invoice invoice) {
         Invoice updatedInvoice = invoice;

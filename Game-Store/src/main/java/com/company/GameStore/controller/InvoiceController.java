@@ -41,6 +41,9 @@ public class InvoiceController {
         if (taxServiceLayer.findSalesTaxRateByState(invoice.getState()) == null) {
             throw new QueryNotFoundException(invoice.getState() + " is not a valid state code");
         }
+        if (invoice.getQuantity() <= 0) {
+            throw new IllegalArgumentException("You must purchase at least 1 item");
+        }
         return serviceLayer.addInvoice(invoice);
     }
 
