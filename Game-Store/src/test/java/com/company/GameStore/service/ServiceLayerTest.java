@@ -2,6 +2,7 @@ package com.company.GameStore.service;
 
 import com.company.GameStore.DTO.Game;
 import com.company.GameStore.DTO.Invoice;
+import com.company.GameStore.DTO.Tshirt;
 import com.company.GameStore.repository.ConsoleRepository;
 import com.company.GameStore.repository.GameRepository;
 import com.company.GameStore.repository.InvoiceRepository;
@@ -34,12 +35,22 @@ public class ServiceLayerTest {
     private Invoice invoice2;
     private List<Invoice> invoiceList;
 
+    private List<Tshirt> tshirtList;
+    private List<Tshirt> tshirtListByColorRed;
+    private List<Tshirt> tshirtListBySizeSmall;
+    private List<Tshirt> tshirtListByColorAndSizeRedAndSmall;
+
+    private List<Tshirt> actualTshirt;
+    private List<Tshirt> expectedTshirt;
+
     @Before
     public void setUp() throws Exception {
         setUpGameRepositoryMock();
         setUpInvoiceRepositoryMock();
-        serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository);
-}
+        setUpTshirtRepositoryMock();
+    }
+
+    serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository);
 
     private void setUpGameRepositoryMock() {
         gameRepository = mock(GameRepository.class);
@@ -75,6 +86,64 @@ public class ServiceLayerTest {
         doReturn(invoice1).when(invoiceRepository).save(invoice1);
     }
 
+    //Ask About Optional.
+    private void setUpTshirtRepositoryMock(){
+        tshirtRepository = mock(TshirtRepository.class);
+        Tshirt smallRedTshirt = new Tshirt(1,"small","red","A lovely red T-shirt",9.99,10);
+        Tshirt mediumBlueTshirt = new Tshirt(2,"medium","blue","A lovely blue T-shirt",9.99,10);
+
+        tshirtList = Arrays.asList(smallRedTshirt,mediumBlueTshirt);
+        tshirtListByColorRed = Arrays.asList(smallRedTshirt);
+        tshirtListBySizeSmall = Arrays.asList(smallRedTshirt);
+        tshirtListByColorAndSizeRedAndSmall = Arrays.asList(smallRedTshirt);
+
+        doReturn(tshirtList).when(tshirtRepository).findAll();
+        doReturn(tshirtListByColorRed).when(tshirtRepository).findByColor("red");
+        doReturn(tshirtListBySizeSmall).when(tshirtRepository).findBySize("small");
+        doReturn(tshirtListByColorAndSizeRedAndSmall).when(tshirtRepository).findByColorAndSize("red","small");
+        doReturn(Optional.of(smallRedTshirt)).when(tshirtRepository).findById(1);
+        doReturn(smallRedTshirt).when(tshirtRepository).save(smallRedTshirt);
+
+    }
+
+    //---------------------------------- T-shirt service tests ------------------------------------
+    @Test
+    public void shouldFindAllTshirts(){
+        List<Tshirt> expectedTshirts = tshirtList;
+        List<Tshirt> actualTshirts = serviceLayer.getAllTshirt();
+        assertEquals(expectedTshirts,actualTshirts);
+    }
+    @Test
+    public void shouldFindTshirtByColor(){
+        expectedTshirt = tshirtListByColorRed;
+        actualTshirt = serviceLayer.getTshirtByColor("red");
+        assertEquals(expectedTshirt,actualTshirt);
+    }
+
+    @Test
+    public void shouldFindTshirtBySize(){
+        expectedTshirt = tshirtListBySizeSmall;
+        actualTshirt = serviceLayer.getTshirtBySize("small");
+        assertEquals(expectedTshirt,actualTshirt);
+    }
+    @Test
+    public void shouldFindTshirtByColorAndSize(){
+        expectedTshirt = tshirtListByColorAndSizeRedAndSmall;
+        actualTshirt = serviceLayer.getTshirtByColorAndSize("red","small");
+        assertEquals(expectedTshirt,actualTshirt);
+    }
+    @Test
+    public void shouldFindTshirtById(){
+        Tshirt expectedTshirtById = new Tshirt (1,"small","red","A lovely red T-shirt",9.99,10);
+        Optional<Tshirt> actualTshirtById = serviceLayer.getSingleTshirt(1);
+        assertEquals(expectedTshirtById,actualTshirtById.get());
+    }
+    @Test
+    public void shouldAddTshirt(){
+        Tshirt expectedTshirt= new Tshirt (1,"small","red","A lovely red T-shirt",9.99,10);
+        Tshirt addedTshirt = serviceLayer.addTshirt(expectedTshirt);
+        assertEquals(expectedTshirt,addedTshirt);
+    }
     /* --------------------------------- GAME SERVICE LAYER TESTS -------------------------------- */
 
     @Test
