@@ -29,7 +29,7 @@ public class Invoice {
     @Size(max = 2)
     private String state;
     @NotNull
-    @Size(max = 5)
+    @Size(min = 5, max = 5)
     private String zipcode;
     @NotNull
     @Size(max = 20)
