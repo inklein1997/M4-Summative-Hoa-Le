@@ -59,8 +59,6 @@ public class ServiceLayerTest {
     }
 
 
-
-
     private void setUpGameRepositoryMock() {
         gameRepository = mock(GameRepository.class);
 

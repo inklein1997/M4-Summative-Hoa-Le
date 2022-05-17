@@ -115,6 +115,17 @@ public class ServiceLayer {
         return invoiceRepository.findById(id);
     }
 
+    public void decreaseItemQuantity(Invoice invoice) {
+        // You will have to use invoice.getItem_type to select your repository that you are going to use (switch case)
+
+        // create a variable (requestedAmount) that stores the invoice quantity
+        // create a variable (availableAmount) that store the current item quantity
+        // to get available amount you need to use repository.findById(invoice.getItem_id)
+        // create a variable (remainingAmount)
+        // remainingAmount = avaiableAmount - requestedAmount
+        // Save the remainingAmount on the item (Console/Game/Tshirt)
+    }
+
     public Invoice addInvoice(Invoice invoice) {
         Invoice updatedInvoice = invoice;
         updatedInvoice.setTax(applyTaxRate(invoice));
@@ -124,15 +135,7 @@ public class ServiceLayer {
 
     public double applyTaxRate(Invoice invoice) {
         double priceBeforeTax = invoice.getQuantity() * invoice.getUnit_price();
-        System.out.println(priceBeforeTax);
-
-        SalesTaxRate salesTax = salesTaxRateRepository.findByState("TX");
-        System.out.println(salesTax.getRate());
-
-
-        System.out.println(salesTaxRateRepository.findByState("TX").getRate());
         double taxRate = salesTaxRateRepository.findByState(invoice.getState()).getRate();
-        System.out.println(taxRate);
         return priceBeforeTax * taxRate;
     }
 
