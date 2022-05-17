@@ -38,8 +38,8 @@ public class ConsoleControllerTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    private List<Game> expectedConsoleList;
-    private List<Game> expectedConsoleListByManufacturer;
+    private List<Console> expectedConsoleList;
+    private List<Console> expectedConsoleListByManufacturer;
     private Console expectedConsole;
     private Console inputtedConsole;
     private String expectedJson;
