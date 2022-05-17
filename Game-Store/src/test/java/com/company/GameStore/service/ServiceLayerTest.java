@@ -48,10 +48,9 @@ public class ServiceLayerTest {
         setUpGameRepositoryMock();
         setUpInvoiceRepositoryMock();
         setUpTshirtRepositoryMock();
-
-
-        serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository);
     }
+
+    serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository);
 
     private void setUpGameRepositoryMock() {
         gameRepository = mock(GameRepository.class);
