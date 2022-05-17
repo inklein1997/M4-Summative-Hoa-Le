@@ -56,9 +56,9 @@ public class ServiceLayerTest {
         setUpInvoiceRepositoryMock();
         setUpSalesTaxRateRepositoryMock();
         setUpTshirtRepositoryMock();
-    }
+        serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository, salesTaxRateRepository);
 
-   serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository, salesTaxRateRepository);
+    }
 
     private void setUpGameRepositoryMock() {
         gameRepository = mock(GameRepository.class);
@@ -264,7 +264,6 @@ public class ServiceLayerTest {
     @Test
     public void shouldCalculateSalesTax() {
         expectedTax = 15.00;
-        System.out.println(invoice1);
         actualTax = serviceLayer.applyTaxRate(invoice1);
 
         assertEquals(expectedTax, actualTax, .01);

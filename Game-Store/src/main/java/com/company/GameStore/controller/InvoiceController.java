@@ -3,6 +3,7 @@ package com.company.GameStore.controller;
 import com.company.GameStore.DTO.Invoice;
 import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.service.ServiceLayer;
+import com.company.GameStore.service.TaxServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,8 @@ public class InvoiceController {
 
     @Autowired
     ServiceLayer serviceLayer;
+    @Autowired
+    TaxServiceLayer taxServiceLayer;
 
     @GetMapping("/invoices")
     @ResponseStatus(HttpStatus.OK)
@@ -35,6 +38,9 @@ public class InvoiceController {
     @PostMapping("/invoices")
     @ResponseStatus(HttpStatus.CREATED)
     public Invoice createInvoice(@Valid @RequestBody Invoice invoice) {
+        if (taxServiceLayer.findSalesTaxRateByState(invoice.getState()) == null) {
+            throw new QueryNotFoundException(invoice.getState() + " is not a valid state code");
+        }
         return serviceLayer.addInvoice(invoice);
     }
 

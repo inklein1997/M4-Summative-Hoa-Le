@@ -137,16 +137,7 @@ public class ServiceLayer {
 
     public double applyTaxRate(Invoice invoice) {
         double priceBeforeTax = invoice.getQuantity() * invoice.getUnit_price();
-        System.out.println(priceBeforeTax);
-
-        SalesTaxRate salesTax = salesTaxRateRepository.findByState("TX");
-        System.out.println(salesTax.getRate());
-
-
-
-        System.out.println(salesTaxRateRepository.findByState("TX").getRate());
         double taxRate = salesTaxRateRepository.findByState(invoice.getState()).getRate();
-        System.out.println(taxRate);
         return priceBeforeTax * taxRate;
     }
 

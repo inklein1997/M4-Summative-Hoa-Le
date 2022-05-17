@@ -2,10 +2,12 @@ package com.company.GameStore.controller;
 
 import com.company.GameStore.DTO.Invoice;
 import com.company.GameStore.service.ServiceLayer;
+import com.company.GameStore.service.TaxServiceLayer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,6 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class InvoiceControllerTest {
     @MockBean
     ServiceLayer serviceLayer;
+
+    @MockBean
+    TaxServiceLayer taxServiceLayer;
 
     @Autowired
     private MockMvc mockMvc;
@@ -62,6 +67,7 @@ public class InvoiceControllerTest {
         when(serviceLayer.getAllInvoices()).thenReturn(invoiceList);
         when(serviceLayer.getInvoiceById(1)).thenReturn(Optional.of(expectedInvoice1));
         when(serviceLayer.addInvoice(inputtedInvoice)).thenReturn(expectedInvoice1);
+        when(taxServiceLayer.findSalesTaxRateByState("NOTASTATECODE")).thenReturn(null);
     }
 
     /* ============================= TESTING GET ROUTES ============================= */
@@ -124,5 +130,18 @@ public class InvoiceControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void shouldReturnStatus404ForInvalidStateCode() throws Exception {
+        inputtedInvoice.setState("AA");
+
+        inputtedJson = mapper.writeValueAsString(inputtedInvoice);
+
+        mockMvc.perform(post("/invoices")
+                .content(inputtedJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 }
