@@ -23,6 +23,14 @@ public class SalesTaxRate {
     @Digits(integer = 3,fraction = 2)
     private double rate;
 
+    public SalesTaxRate(String state, double rate) {
+        this.state = state;
+        this.rate = rate;
+    }
+
+    public SalesTaxRate() {
+    }
+
     public String getState() {
         return state;
     }
