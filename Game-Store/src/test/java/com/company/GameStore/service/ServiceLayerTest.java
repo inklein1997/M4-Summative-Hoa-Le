@@ -21,6 +21,7 @@ import static org.mockito.Mockito.mock;
 public class ServiceLayerTest {
     ServiceLayer serviceLayer;
     GameRepository gameRepository;
+    ConsoleRepository consoleRepository;
     TshirtRepository tshirtRepository;
     InvoiceRepository invoiceRepository;
     ConsoleRepository consoleRepository;
@@ -40,7 +41,11 @@ public class ServiceLayerTest {
         setUpGameRepositoryMock();
         setUpInvoiceRepositoryMock();
 
+<<<<<<< HEAD
+        serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository);
+=======
         serviceLayer = new ServiceLayer(gameRepository,consoleRepository,tshirtRepository, invoiceRepository);
+>>>>>>> f360f85157d3757855165d5c679c56917d791259
     }
 
     private void setUpGameRepositoryMock() {

@@ -27,10 +27,6 @@ public class ServiceLayer {
 
     @Autowired
 
-
-
-    public List<Console> ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository) {
-
     public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository) {
 
         this.gameRepository = gameRepository;
@@ -38,7 +34,6 @@ public class ServiceLayer {
         this.tshirtRepository = tshirtRepository;
         this.invoiceRepository = invoiceRepository;
     }
-
 
     // CLEAR DATABASE
     public void clearDatabase() {
@@ -88,7 +83,7 @@ public class ServiceLayer {
         return consoleRepository.findByManufacturer(manufacturer);
     }
 
-    public List<Console> getAllConsoles(Console){
+    public List<Console> getAllConsoles(){
         return consoleRepository.findAll();
     }
 
@@ -123,17 +118,9 @@ public class ServiceLayer {
 
 }
 
-    public void clearDatabase() {
-    }
+//    public void clearDatabase() {
+//    }
+//
+//    public Object getAllConsoles() {
+//    }
 
-    public Object getAllConsoles() {
-    }
-
-    public Object getConsolesByManufacturer() {
-    }
-
-    public Object getSingleConsole() {
-    }
-
-    public Object addGame(Console inputtedConsole) {
-    }
