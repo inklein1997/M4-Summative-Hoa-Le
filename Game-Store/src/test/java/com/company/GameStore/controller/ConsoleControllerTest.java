@@ -2,16 +2,24 @@ package com.company.GameStore.controller;
 
 
 import com.company.GameStore.DTO.Console;
+import com.company.GameStore.DTO.Game;
+import com.company.GameStore.service.ServiceLayer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -20,16 +28,54 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(ConsoleController.class)
 public class ConsoleControllerTest {
+    @MockBean
+    ServiceLayer serviceLayer;
 
     // Wiring in the MockMvc object
     @Autowired
     private MockMvc mockMvc;
 
-    // ObjectMapper used to convert Java objects to JSON and vice versa
     private ObjectMapper mapper = new ObjectMapper();
+
+    private List<Game> expectedGameList;
+    private List<Game> expectedConsoleListByManufacturer;
+    private Console expectedConsole;
+    private Console inputtedConsole;
+    private String expectedJson;
+    private String inputtedJson;
+
+
+
 
     @Before
     public void setUp() {
+        serviceLayer.clearDatabase();
+        setUpMocksForGetRoutes();
+    }
+
+    private void setUpMocksForGetRoutes() {
+        expectedGameList = Arrays.asList(
+                new Game(1, "Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15),
+                new Game(2, "Miitopia", "M (Mature)", "An adventure with a Mii character cast of your choosing", 39.99, "Nintendo", 7),
+                new Game(3, "Halo Infinite", "T (Teen)", "Experience the ultimate gameplay and explore a stunning sci-fi world in this riveting, first person shooter video game.", 39.99, "Xbox Game Studios", 5)
+        );
+
+        expectedGameListByStudio = Arrays.asList(
+                new Game(1, "Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15),
+                new Game(2, "Miitopia", "M (Mature)", "An adventure with a Mii character cast of your choosing", 39.99, "Nintendo", 7)
+        );
+
+
+
+        expectedGame = new Game(13,"Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
+
+        inputtedGame = new Game(13, "Nintendo Switch Sports", "E (Everyone)", "Class sports simulation video game", 49.99, "Nintendo", 15);
+
+        when(serviceLayer.getAllGames()).thenReturn(expectedGameList);
+        when(serviceLayer.getGamesByStudio("Nintendo")).thenReturn(expectedGameListByStudio);
+        when(serviceLayer.getGameByTitle("Nintendo Switch Sports")).thenReturn(Optional.of(expectedGame));
+        when(serviceLayer.getSingleGame(13)).thenReturn(Optional.of(expectedGame));
+        when(serviceLayer.addGame(inputtedGame)).thenReturn(expectedGame);
 
     }
 
@@ -93,7 +139,7 @@ public class ConsoleControllerTest {
 
     // Testing POST /consoles
     @Test
-    public void shouldReturnNewRecordOnPostRequest() throws Exception {
+    public void shouldReturnNewConsoledOnPostRequest() throws Exception {
 
         // ARRANGE
         Console inputConsole = new Console();
@@ -137,7 +183,7 @@ public class ConsoleControllerTest {
         // ARRANGE
         Console inputConsole = new Console();
         inputConsole.setModel("ipod");
-        inputConsole.setManufacturer("Samsung");
+        inputConsole.setManufacturer("Microsoft");
         inputConsole.setMemory_amount("900GB");
         inputConsole.setProcessor("AMV rising 7");
         inputConsole.setPrice(89.0);
@@ -170,5 +216,8 @@ public class ConsoleControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }
+
+
+
 
 }

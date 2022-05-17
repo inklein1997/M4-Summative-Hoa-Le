@@ -23,15 +23,12 @@ public class ServiceLayer {
 
     @Autowired
 
-    public void ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository) {
+    public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository) {
         this.gameRepository = gameRepository;
         this.consoleRepository = consoleRepository;
-
-    public void ServiceLayer(GameRepository gameRepository, TshirtRepository tshirtRepository) {
-        this.gameRepository = gameRepository;
         this.tshirtRepository = tshirtRepository;
-
     }
+
 
     // CLEAR DATABASE
     public void clearDatabase() {
