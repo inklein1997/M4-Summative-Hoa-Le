@@ -31,9 +31,9 @@ public class ConsoleRepositoryTest {
     public void setUp() {
         consoleRepository.deleteAll();
 
-        console = consoleRepository.save(new Console());
-        anotherConsole = consoleRepository.save(new Console(3, "PS4", "Sony", "1TB", "Dual Shock", 579.00, 55));
-
+        console = consoleRepository.save(new Console("PS4", "Sony", "1TB", "Dual Shock", 579.00, 55));
+        anotherConsole = consoleRepository.save(new Console(2, "PS4", "Sony", "1TB", "Dual Shock", 579.00, 55));
+        System.out.println(console);
         expectedConsoleList.clear();
     }
 
@@ -51,7 +51,7 @@ public class ConsoleRepositoryTest {
 
     @Test
     public void updateConsole() {
-        console.setDescription("New description");
+        console.setManufacturer("New manufacturer");
         consoleRepository.save(console);
         Optional<Console> console1 = consoleRepository.findById(console.getConsole_id());
 
@@ -65,7 +65,7 @@ public class ConsoleRepositoryTest {
 
         List<Console> actualConsoleList = consoleRepository.findAll();
 
-        assertEquals(actualConsoleList.size(), 2);
+        assertEquals(2, actualConsoleList.size());
         assertEquals(expectedConsoleList, actualConsoleList);
     }
 
@@ -74,7 +74,7 @@ public class ConsoleRepositoryTest {
         expectedConsoleList.add(console);
         expectedConsoleList.add(anotherConsole);
 
-        List<Console> actualConsoleList = consoleRepository.findByManufacturer("Microsoft");
+        List<Console> actualConsoleList = consoleRepository.findByManufacturer("Sony");
 
         assertEquals(expectedConsoleList, actualConsoleList);
     }

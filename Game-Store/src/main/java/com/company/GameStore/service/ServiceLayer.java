@@ -36,6 +36,7 @@ public class ServiceLayer {
     public void clearDatabase() {
         gameRepository.deleteAll();
         tshirtRepository.deleteAll();
+        consoleRepository.deleteAll();
         invoiceRepository.deleteAll();
     }
 
@@ -93,9 +94,11 @@ public class ServiceLayer {
     }
 
     public void updateConsole(Console console) {
+        consoleRepository.save(console);
     }
 
     public void deleteConsole(int id) {
+        consoleRepository.deleteById(id);
     }
 
 
