@@ -6,6 +6,7 @@ import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,9 @@ public class ServiceLayer {
     InvoiceRepository invoiceRepository;
     SalesTaxRateRepository salesTaxRateRepository;
     ProcessingFeeRepository processingFeeRepository;
+
+    int availableAmount;
+    int updatedAmount;
 
     @Autowired
     public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository, SalesTaxRateRepository salesTaxRateRepository,ProcessingFeeRepository processingFeeRepository) {
@@ -116,56 +120,19 @@ public class ServiceLayer {
         return invoiceRepository.findById(id);
     }
 
-
-
-    public Invoice addInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
-    @Transactional
-    public void decreaseItemQuantity(Invoice invoice) {
-        // You will have to use invoice.getItem_type to select your repository that you are going to use (switch case)
-
-           int requestedAmount = invoice.getQuantity();
-
-        switch (invoice.getItem_type()){
-                case "game" :
-                    Game game = getSingleGame(invoice.getItem_id()).get();
-                    int availableAmount = game.getQuantity();
-                    int updatedAmount = availableAmount - requestedAmount;
-                    game.setQuantity(updatedAmount);
-                    updateGame(game);
-                    break;
-                case "console":
-                    Console console = getSingleConsole(invoice.getItem_id()).get();
-                    int availableAmount = console.getQuantity();
-                    int updatedAmount = availableAmount - requestedAmount;
-                    console.setQuantity(updatedAmount);
-                    updateConsole(console);
-                    break;
-                case "tshirt":
-                    Tshirt tshirt = getSingleTshirt(invoice.getItem_id()).get();
-                    int availableAmount = tshirt.getQuantity();
-                    int updatedAmount = availableAmount - requestedAmount;
-                    tshirt.setQuantity(updatedAmount);
-                    updateTshirt(tshirt);
-                    break;
-                default:
-//                    quantity = "expects a quantity";
-            }
-
-
-        // create a variable (requestedAmount) that stores the invoice quantity
-        // create a variable (availableAmount) that store the current item quantity
-        // to get available amount you need to use repository.findById(invoice.getItem_id)
-        // create a variable (remainingAmount)
-        // remainingAmount = avaiableAmount - requestedAmount
-        // Save the remainingAmount on the item (Console/Game/Tshirt)
-    }
-
-
-
     public Invoice addInvoice(Invoice invoice) {
         Invoice updatedInvoice = invoice;
-        updatedInvoice.setTax(applyTaxRate(invoice));
-        updatedInvoice.setProcessing_fee(applyProcessingFee(invoice));
+
+        double salesTax = applyTaxRate(invoice);
+        double processingFee = applyProcessingFee(invoice);
+        double subtotal = calculateSubtotal(invoice);
+        double total = calculateTotal(subtotal, processingFee, salesTax);
+
+        updatedInvoice.setTax(salesTax);
+        updatedInvoice.setProcessing_fee(processingFee);
+        updatedInvoice.setSubtotal(subtotal);
+        updatedInvoice.setTotal(total);
+
         return invoiceRepository.save(updatedInvoice);
     }
 
@@ -181,6 +148,52 @@ public class ServiceLayer {
             processingFee += 15.49;
         }
         return  processingFee;
+    }
+
+    public double calculateTotal(double subtotal, double processingFee, double salesTax) {
+        return subtotal + processingFee + salesTax;
+    }
+
+    public double calculateSubtotal(Invoice invoice) {
+        return invoice.getQuantity() * invoice.getUnit_price();
+    }
+
+    public int checkQuantity(int requestedAmount, int availableAmount) {
+        if (availableAmount > requestedAmount) {
+            return availableAmount - requestedAmount;
+        } else {
+            throw new DataIntegrityViolationException("Unfortunately, there is not enough of that item in stock to purchase that many.  Please add to stock or order less");
+        }
+    }
+
+    @Transactional
+    public void decreaseItemQuantity(Invoice invoice) {
+
+        int requestedAmount = invoice.getQuantity();
+
+        switch (invoice.getItem_type()) {
+            case "game":
+                Game game = getSingleGame(invoice.getItem_id()).get();
+                availableAmount = game.getQuantity();
+                updatedAmount = checkQuantity(requestedAmount, availableAmount);
+                game.setQuantity(updatedAmount);
+                updateGame(game);
+                break;
+            case "console":
+                Console console = getSingleConsole(invoice.getItem_id()).get();
+                availableAmount = console.getQuantity();
+                updatedAmount = availableAmount - requestedAmount;
+                console.setQuantity(updatedAmount);
+                updateConsole(console);
+                break;
+            case "tshirt":
+                Tshirt tshirt = getSingleTshirt(invoice.getItem_id()).get();
+                availableAmount = tshirt.getQuantity();
+                updatedAmount = availableAmount - requestedAmount;
+                tshirt.setQuantity(updatedAmount);
+                updateTshirt(tshirt);
+                break;
+        }
     }
 
 }

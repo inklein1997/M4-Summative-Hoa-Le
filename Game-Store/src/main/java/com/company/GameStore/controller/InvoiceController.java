@@ -38,12 +38,16 @@ public class InvoiceController {
     @PostMapping("/invoices")
     @ResponseStatus(HttpStatus.CREATED)
     public Invoice createInvoice(@Valid @RequestBody Invoice invoice) {
+        System.out.println("TEST1");
         if (taxServiceLayer.findSalesTaxRateByState(invoice.getState()) == null) {
+            System.out.println("TEST2");
             throw new QueryNotFoundException(invoice.getState() + " is not a valid state code");
         }
         if (invoice.getQuantity() <= 0) {
+            System.out.println("TEST3");
             throw new IllegalArgumentException("You must purchase at least 1 item");
         }
+        System.out.println("TEST4");
         return serviceLayer.addInvoice(invoice);
     }
 
