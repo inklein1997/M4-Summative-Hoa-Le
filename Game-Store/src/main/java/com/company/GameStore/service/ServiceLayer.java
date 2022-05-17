@@ -19,6 +19,8 @@ public class ServiceLayer {
     GameRepository gameRepository;
     ConsoleRepository consoleRepository;
     InvoiceRepository invoiceRepository;
+    @Autowired
+    SalesTaxRateRepository salesTaxRateRepository;
 
     @Autowired
     public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository) {
@@ -110,11 +112,11 @@ public class ServiceLayer {
 
     public Invoice addInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
 
-}
+    private double applyTaxRate(Invoice invoice) {
+        double priceBeforeTax = invoice.getQuantity() * invoice.getUnit_price();
+        double taxRate = salesTaxRateRepository.findByState(invoice.getState()).getRate();
+        return priceBeforeTax * taxRate;
+    }
 
-//    public void clearDatabase() {
-//    }
-//
-//    public Object getAllConsoles() {
-//    }
+}
 
