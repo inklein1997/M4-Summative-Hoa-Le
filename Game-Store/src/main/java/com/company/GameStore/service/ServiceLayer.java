@@ -1,19 +1,14 @@
 package com.company.GameStore.service;
 
-import com.company.GameStore.DTO.Console;
-import com.company.GameStore.DTO.Game;
+import com.company.GameStore.DTO.*;
 
-import com.company.GameStore.DTO.Invoice;
 import com.company.GameStore.exception.QueryNotFoundException;
-import com.company.GameStore.repository.ConsoleRepository;
+import com.company.GameStore.repository.*;
 
-import com.company.GameStore.DTO.Tshirt;
-import com.company.GameStore.repository.GameRepository;
-import com.company.GameStore.repository.InvoiceRepository;
-import com.company.GameStore.repository.TshirtRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,9 +19,10 @@ public class ServiceLayer {
     GameRepository gameRepository;
     ConsoleRepository consoleRepository;
     InvoiceRepository invoiceRepository;
+//    @Autowired
+//    SalesTaxRateRepository salesTaxRateRepository;
 
     @Autowired
-
     public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository) {
 
         this.gameRepository = gameRepository;
@@ -40,6 +36,11 @@ public class ServiceLayer {
         gameRepository.deleteAll();
         tshirtRepository.deleteAll();
         invoiceRepository.deleteAll();
+    }
+
+    public void loadTaxes() {
+        HashMap<String, Double> stateTaxRates;
+
     }
 
     //Jpa Searches
