@@ -29,6 +29,7 @@ public class ServiceLayer {
         this.consoleRepository = consoleRepository;
         this.tshirtRepository = tshirtRepository;
         this.invoiceRepository = invoiceRepository;
+        this.salesTaxRateRepository = salesTaxRateRepository;
     }
 
     // CLEAR DATABASE
