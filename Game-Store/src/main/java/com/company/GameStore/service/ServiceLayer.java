@@ -28,7 +28,11 @@ public class ServiceLayer {
     @Autowired
 
 
+
+    public List<Console> ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository) {
+
     public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository) {
+
         this.gameRepository = gameRepository;
         this.consoleRepository = consoleRepository;
         this.tshirtRepository = tshirtRepository;
@@ -84,7 +88,7 @@ public class ServiceLayer {
         return consoleRepository.findByManufacturer(manufacturer);
     }
 
-    public List<Console> getAllConsoles(){
+    public List<Console> getAllConsoles(Console){
         return consoleRepository.findAll();
     }
 
@@ -102,6 +106,8 @@ public class ServiceLayer {
     public void deleteConsole(int id) {
     }
 
+
+
     // Invoice CRUD -- Do not need to update / delete
 
     public List<Invoice> getAllInvoices() { return invoiceRepository.findAll(); }
@@ -116,3 +122,18 @@ public class ServiceLayer {
     public Invoice addInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
 
 }
+
+    public void clearDatabase() {
+    }
+
+    public Object getAllConsoles() {
+    }
+
+    public Object getConsolesByManufacturer() {
+    }
+
+    public Object getSingleConsole() {
+    }
+
+    public Object addGame(Console inputtedConsole) {
+    }
