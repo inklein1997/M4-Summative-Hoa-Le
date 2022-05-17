@@ -6,6 +6,7 @@ import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -19,14 +20,16 @@ public class ServiceLayer {
     GameRepository gameRepository;
     ConsoleRepository consoleRepository;
     InvoiceRepository invoiceRepository;
+    SalesTaxRateRepository salesTaxRateRepository;
 
     @Autowired
-    public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository) {
+    public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository, SalesTaxRateRepository salesTaxRateRepository) {
 
         this.gameRepository = gameRepository;
         this.consoleRepository = consoleRepository;
         this.tshirtRepository = tshirtRepository;
         this.invoiceRepository = invoiceRepository;
+        this.salesTaxRateRepository = salesTaxRateRepository;
     }
 
     // CLEAR DATABASE
@@ -111,13 +114,26 @@ public class ServiceLayer {
         return invoiceRepository.findById(id);
     }
 
-    public Invoice addInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
+    public Invoice addInvoice(Invoice invoice) {
+        Invoice updatedInvoice = invoice;
+        updatedInvoice.setTax(applyTaxRate(invoice));
+
+        return invoiceRepository.save(updatedInvoice);
+    }
+
+    public double applyTaxRate(Invoice invoice) {
+        double priceBeforeTax = invoice.getQuantity() * invoice.getUnit_price();
+        System.out.println(priceBeforeTax);
+
+        SalesTaxRate salesTax = salesTaxRateRepository.findByState("TX");
+        System.out.println(salesTax.getRate());
+
+
+        System.out.println(salesTaxRateRepository.findByState("TX").getRate());
+        double taxRate = salesTaxRateRepository.findByState(invoice.getState()).getRate();
+        System.out.println(taxRate);
+        return priceBeforeTax * taxRate;
+    }
 
 }
-
-//    public void clearDatabase() {
-//    }
-//
-//    public Object getAllConsoles() {
-//    }
 
