@@ -24,7 +24,8 @@ public class ServiceLayerTest {
     GameRepository gameRepository;
     ConsoleRepository consoleRepository;
     TshirtRepository tshirtRepository;
-    InvoiceRepository invoiceRepository;
+    InvoiceRepository invoiceRepositor
+
 
     private Game expectedGame;
     private Optional<Game> actualGame;
@@ -47,7 +48,13 @@ public class ServiceLayerTest {
     public void setUp() throws Exception {
         setUpGameRepositoryMock();
         setUpInvoiceRepositoryMock();
+
+
+        serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository);
+
+
         setUpTshirtRepositoryMock();
+
     }
 
     serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository);

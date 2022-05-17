@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,14 +43,14 @@ public class ConsoleController {
 
     @PostMapping("/consoles")
     @ResponseStatus(HttpStatus.CREATED)
-    public Console createConsole(@RequestBody Console console) {
+    public Console createConsole(@RequestBody @Valid Console console) {
         System.out.println(console);
         return service.addConsole(console);
     }
 
     @PutMapping("/consoles/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateConsole(@RequestBody Console console, @PathVariable int id) {
+    public void updateConsole(@RequestBody @Valid Console console, @PathVariable int id) {
         if (console.getConsole_id() == 0) {
             console.setConsole_id(id);
         }
