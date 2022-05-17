@@ -1,6 +1,7 @@
 package com.company.GameStore.controller;
 
 import com.company.GameStore.service.ServiceLayer;
+import com.company.GameStore.service.TaxServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoadData {
 
     @Autowired
-    ServiceLayer serviceLayer;
+    TaxServiceLayer serviceLayer;
 
     @PostMapping("/loadData")
     @ResponseStatus(HttpStatus.CREATED)
