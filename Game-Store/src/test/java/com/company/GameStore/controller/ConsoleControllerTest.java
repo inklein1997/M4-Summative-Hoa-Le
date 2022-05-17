@@ -151,7 +151,44 @@ public class ConsoleControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
     }
+    //Testing PUT Routes for Controller Success
+    @Test
+    public void shouldRespondWithStatus204WithValidPutRequest() throws Exception {
+        inputtedJson = mapper.writeValueAsString(inputtedConsole);
 
+        mockMvc.perform(put("/consoles/18")
+                        .content(inputtedJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+      //Testing PUT Routes for Controller Success
+      @Test
+      public void shouldReturn422StatusCodeIfConsoleIdsDoNotMatch() throws Exception {
+          inputtedJson = mapper.writeValueAsString(inputtedConsole);
+
+          mockMvc.perform(put("/consoles/69421")
+                          .content(inputtedJson)
+                          .contentType(MediaType.APPLICATION_JSON))
+                  .andDo(print())
+                  .andExpect(status().isUnprocessableEntity());
+      }
+
+    @Test public void shouldReturn422StatusCodeIfRequestBodyIsInvalidForPutRequest() throws Exception {
+        HashMap<String, Object> invalidRequestBody = new HashMap();
+        invalidRequestBody.put("id", Integer.parseInt("85"));
+        invalidRequestBody.put("manufacturer", "Unknown");
+
+
+        inputtedJson = mapper.writeValueAsString(invalidRequestBody);
+
+        mockMvc.perform(put("/consoles/85")
+                        .content(inputtedJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
 
 
 
