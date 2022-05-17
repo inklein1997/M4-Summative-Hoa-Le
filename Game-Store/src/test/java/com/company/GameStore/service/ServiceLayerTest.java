@@ -1,10 +1,7 @@
 package com.company.GameStore.service;
 
-import com.company.GameStore.DTO.Game;
-import com.company.GameStore.DTO.Invoice;
-import com.company.GameStore.DTO.SalesTaxRate;
+import com.company.GameStore.DTO.*;
 import com.company.GameStore.repository.*;
-import com.company.GameStore.DTO.Tshirt;
 import com.company.GameStore.repository.ConsoleRepository;
 import com.company.GameStore.repository.GameRepository;
 import com.company.GameStore.repository.InvoiceRepository;
@@ -29,6 +26,7 @@ public class ServiceLayerTest {
     TshirtRepository tshirtRepository;
     InvoiceRepository invoiceRepository;
     SalesTaxRateRepository salesTaxRateRepository;
+    ProcessingFeeRepository processingFeeRepository;
 
     private Game expectedGame;
     private Optional<Game> actualGame;
@@ -56,9 +54,10 @@ public class ServiceLayerTest {
         setUpInvoiceRepositoryMock();
         setUpSalesTaxRateRepositoryMock();
         setUpTshirtRepositoryMock();
-        serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository, salesTaxRateRepository);
-
+        setUpProcessingFeeRepositoryMock();
+    serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository,salesTaxRateRepository,processingFeeRepository);
     }
+
 
     private void setUpGameRepositoryMock() {
         gameRepository = mock(GameRepository.class);
@@ -102,6 +101,16 @@ public class ServiceLayerTest {
 
         doReturn(salesTaxRate).when(salesTaxRateRepository).findByState("TX");
 
+    }
+    private void setUpProcessingFeeRepositoryMock() {
+        processingFeeRepository = mock(ProcessingFeeRepository.class);
+
+        invoice1 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        invoice2 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 11, 499.99, 40.00, 14.90, 554.8);
+        ProcessingFee processingFee = new ProcessingFee("Games", 1.49);
+
+
+        doReturn(processingFee).when(processingFeeRepository).findByProductType("Games");
     }
 
     //Ask About Optional.
@@ -264,10 +273,24 @@ public class ServiceLayerTest {
     @Test
     public void shouldCalculateSalesTax() {
         expectedTax = 15.00;
+//        System.out.println(invoice1);
         actualTax = serviceLayer.applyTaxRate(invoice1);
 
         assertEquals(expectedTax, actualTax, .01);
     }
 
+    @Test
+    public void shouldCalculateProcessingFee() {
+        double expectedFee = 1.49;
+        double actualFee= serviceLayer.applyProcessingFee(invoice1);
+        assertEquals(expectedFee, actualFee, .01);
+    }
+
+    @Test
+    public void shouldCalculateProcessingFeeGreater10() {
+        double expectedFee = 1.49 + 15.49;
+        double actualFee= serviceLayer.applyProcessingFee(invoice2);
+        assertEquals(expectedFee, actualFee, .01);
+    }
 
 }
