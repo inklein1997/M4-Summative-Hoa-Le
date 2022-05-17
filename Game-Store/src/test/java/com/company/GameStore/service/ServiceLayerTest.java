@@ -2,6 +2,7 @@ package com.company.GameStore.service;
 
 import com.company.GameStore.DTO.Game;
 import com.company.GameStore.DTO.Invoice;
+import com.company.GameStore.repository.ConsoleRepository;
 import com.company.GameStore.repository.GameRepository;
 import com.company.GameStore.repository.InvoiceRepository;
 import com.company.GameStore.repository.TshirtRepository;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.mock;
 public class ServiceLayerTest {
     ServiceLayer serviceLayer;
     GameRepository gameRepository;
+    ConsoleRepository consoleRepository;
     TshirtRepository tshirtRepository;
     InvoiceRepository invoiceRepository;
 
@@ -38,7 +40,7 @@ public class ServiceLayerTest {
         setUpGameRepositoryMock();
         setUpInvoiceRepositoryMock();
 
-        serviceLayer = new ServiceLayer(gameRepository, tshirtRepository, invoiceRepository);
+        serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository);
     }
 
     private void setUpGameRepositoryMock() {

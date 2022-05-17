@@ -55,28 +55,28 @@ public class ConsoleControllerTest {
     }
 
     private void setUpMocksForGetRoutes() {
-        expectedConsoleList = (List<Game>) Arrays.asList(
-                new Console(2, "PS4", "Sony", "1TB", "Dual", "579.00", 50),
-                new Console(3, "Wii U", "Nintendo", "32GB", "Dual", "244.99", 60),
-                new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", "739.99", 65)
+        expectedConsoleList = (List<Console>) Arrays.asList(
+                new Console(2, "PS4", "Sony", "1TB", "Dual", 579.00, 50),
+                new Console(3, "Wii U", "Nintendo", "32GB", "Dual", 244.99, 60),
+                new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", 739.99, 65)
 
                 );
 
         expectedConsoleListByManufacturer = Arrays.asList(
-                new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", "739.99", 65)
+                new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", 739.99, 65)
 
         );
 
 
 
-        expectedConsole = new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", "739.99", 65);
+        expectedConsole = new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", 739.99, 65);
 
-        inputtedConsole = new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", "739.99", 65);
+        inputtedConsole = new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", 739.99, 65);
 
         when(serviceLayer.getAllConsoles()).thenReturn(expectedConsoleList);
-        when(serviceLayer.getConsolesByManufacturer()).thenReturn(expectedConsoleListByManufacturer);
-        when(serviceLayer.getSingleConsole()).thenReturn(Optional.of(expectedConsole));
-        when(serviceLayer.addGame(inputtedConsole)).thenReturn(expectedConsole);
+        when(serviceLayer.getConsolesByManufacturer("Microsoft")).thenReturn(expectedConsoleListByManufacturer);
+        when(serviceLayer.getSingleConsole(4)).thenReturn(Optional.of(expectedConsole));
+        when(serviceLayer.addConsole(inputtedConsole)).thenReturn(expectedConsole);
 
     }
 
