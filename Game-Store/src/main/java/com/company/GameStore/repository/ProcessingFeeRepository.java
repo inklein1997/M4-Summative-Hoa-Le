@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProcessingFeeRepository extends JpaRepository<ProcessingFee,String> {
-    ProcessingFee findByProductType(String product_type);
+    ProcessingFee findByProductType(String productType);
 }

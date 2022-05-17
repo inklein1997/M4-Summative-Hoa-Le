@@ -9,6 +9,7 @@ import com.company.GameStore.repository.TshirtRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.swing.text.html.Option;
 import java.util.Arrays;
@@ -291,6 +292,37 @@ public class ServiceLayerTest {
         double expectedFee = 1.49 + 15.49;
         double actualFee= serviceLayer.applyProcessingFee(invoice2);
         assertEquals(expectedFee, actualFee, .01);
+    }
+
+    @Test
+    public void shouldReturnQuantityChangeIfEnoughItemsInInventory() {
+        int expectedReturn = 4;
+        int actualReturn = serviceLayer.checkQuantity(4,8);
+        assertEquals(expectedReturn, actualReturn);
+    }
+
+    @Test
+    public void shouldCalculateSubtotal() {
+        double expectedReturn = 499.90;
+        double actualReturn = serviceLayer.calculateSubtotal(invoice1);
+        assertEquals(expectedReturn, actualReturn, .01);
+    }
+
+    @Test
+    public void shouldCalculateTotal() {
+        double expectedReturn = 59.88;
+        double actualReturn = serviceLayer.calculateTotal(50.00,8.88, 1.00);
+        assertEquals(expectedReturn, actualReturn, .01);
+    }
+
+    @Test
+    public void shouldThrowErrorIfNotEnoughInStock() {
+
+    }
+
+    @Test
+    public void shouldDecreaseQuantityOfItemAfterPurchase() {
+
     }
 
 }
