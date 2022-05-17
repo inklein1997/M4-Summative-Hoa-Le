@@ -8,6 +8,7 @@ import com.company.GameStore.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -112,8 +113,38 @@ public class ServiceLayer {
     }
 
     public Invoice addInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
+    @Transactional
     public void decreaseItemQuantity(Invoice invoice) {
         // You will have to use invoice.getItem_type to select your repository that you are going to use (switch case)
+
+           int requestedAmount = invoice.getQuantity();
+
+        switch (invoice.getItem_type()){
+                case "game" :
+                    Game game = getSingleGame(invoice.getItem_id()).get();
+                    int availableAmount = game.getQuantity();
+                    int updatedAmount = availableAmount - requestedAmount;
+                    game.setQuantity(updatedAmount);
+                    updateGame(game);
+                    break;
+                case "console":
+                    Console console = getSingleConsole(invoice.getItem_id()).get();
+                    int availableAmount = console.getQuantity();
+                    int updatedAmount = availableAmount - requestedAmount;
+                    console.setQuantity(updatedAmount);
+                    updateConsole(console);
+                    break;
+                case "tshirt":
+                    Tshirt tshirt = getSingleTshirt(invoice.getItem_id()).get();
+                    int availableAmount = tshirt.getQuantity();
+                    int updatedAmount = availableAmount - requestedAmount;
+                    tshirt.setQuantity(updatedAmount);
+                    updateTshirt(tshirt);
+                    break;
+                default:
+//                    quantity = "expects a quantity";
+            }
+
 
         // create a variable (requestedAmount) that stores the invoice quantity
         // create a variable (availableAmount) that store the current item quantity
@@ -124,9 +155,5 @@ public class ServiceLayer {
     }
 }
 
-//    public void clearDatabase() {
-//    }
-//
-//    public Object getAllConsoles() {
-//    }
+
 
