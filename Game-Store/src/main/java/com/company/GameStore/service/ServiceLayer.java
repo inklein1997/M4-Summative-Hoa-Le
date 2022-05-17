@@ -28,12 +28,13 @@ public class ServiceLayer {
     @Autowired
 
 
+
     public List<Console> ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository) {
+
+    public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository) {
+
         this.gameRepository = gameRepository;
         this.consoleRepository = consoleRepository;
-        this.tshirtRepository = tshirtRepository;
-    public ServiceLayer(GameRepository gameRepository, TshirtRepository tshirtRepository, InvoiceRepository invoiceRepository) {
-        this.gameRepository = gameRepository;
         this.tshirtRepository = tshirtRepository;
         this.invoiceRepository = invoiceRepository;
     }
