@@ -2,16 +2,24 @@ package com.company.GameStore.controller;
 
 
 import com.company.GameStore.DTO.Console;
+import com.company.GameStore.DTO.Game;
+import com.company.GameStore.service.ServiceLayer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -20,148 +28,90 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(ConsoleController.class)
 public class ConsoleControllerTest {
+    @MockBean
+    ServiceLayer serviceLayer;
 
     // Wiring in the MockMvc object
     @Autowired
     private MockMvc mockMvc;
 
-    // ObjectMapper used to convert Java objects to JSON and vice versa
     private ObjectMapper mapper = new ObjectMapper();
+
+    private List<Game> expectedConsoleList;
+    private List<Game> expectedConsoleListByManufacturer;
+    private Console expectedConsole;
+    private Console inputtedConsole;
+    private String expectedJson;
+    private String inputtedJson;
+
+
+
 
     @Before
     public void setUp() {
+        serviceLayer.clearDatabase();
+        setUpMocksForGetRoutes();
+    }
+
+    private void setUpMocksForGetRoutes() {
+        expectedConsoleList = (List<Game>) Arrays.asList(
+                new Console(),
+                new Console(),
+                new Console()
+        );
+
+        expectedConsoleListByManufacturer = Arrays.asList(
+                new Console(),
+                new Console(2)
+        );
+
+
+
+        expectedConsole = new Console();
+
+        inputtedConsole = new Console();
+
+        when(serviceLayer.getAllConsoles()).thenReturn(expectedConsoleList);
+        when(serviceLayer.getConsolesByManufacturer()).thenReturn(expectedConsoleListByManufacturer);
+        when(serviceLayer.getSingleConsole()).thenReturn(Optional.of(expectedConsole));
+        when(serviceLayer.addGame(inputtedConsole)).thenReturn(expectedConsole);
 
     }
 
 
-    // testing GET /consoles
+    //Testing GET Routes for Successful routing
     @Test
-    public void shouldReturnAllConsoles() throws Exception {
+    public void shouldReturnListOfAllConsolesAndStatus200() throws Exception {
+        expectedJson = mapper.writeValueAsString(expectedConsoleList);
 
         mockMvc.perform(get("/consoles"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0]").isNotEmpty());
+                .andExpect(content().json(expectedJson))
+                .andExpect(status().isOk());
     }
 
-
-    //testing GET /consoles/{id}
     @Test
-    public void shouldReturnConsoleById() throws Exception {
-// ARRANGE
-        Console outputConsole = new Console();
-        outputConsole.setConsole_id(1);
-        outputConsole.setModel("ipod");
-        outputConsole.setManufacturer("Samsung");
-        outputConsole.setMemory_amount("500GB");
-        outputConsole.setProcessor("AMV rising 7");
-        outputConsole.setPrice(59.0);
-        outputConsole.setQuantity(80);
+    public void shouldReturnListOfGamesFilteredByStudioAndStatus200() throws Exception {
+        expectedJson = mapper.writeValueAsString(expectedConsoleListByManufacturer);
 
-        String outputJson = mapper.writeValueAsString(outputConsole);
-
-        // ACT
-        mockMvc.perform(get("/consoles/1"))
+        mockMvc.perform(get("/consoles/manufacturer/Sony"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().json(outputJson));
+                .andExpect(content().json(expectedJson))
+                .andExpect(status().isOk());
     }
 
-    // testing GET /consoles/manufacturer/{manufacturer}
+
     @Test
-    public void shouldReturnConsoleByManufacturer() throws Exception {
-        // ARRANGE
-        Console outputConsole = new Console();
-        outputConsole.setConsole_id(1);
-        outputConsole.setModel("ipod");
-        outputConsole.setManufacturer("Samsung");
-        outputConsole.setMemory_amount("500GB");
-        outputConsole.setProcessor("AMV rising 7");
-        outputConsole.setPrice(59.0);
-        outputConsole.setQuantity(80);
+    public void shouldReturnGameByIdAndStatus200() throws Exception {
+        expectedJson = mapper.writeValueAsString(expectedConsole);
 
-
-
-        String outputJson = mapper.writeValueAsString(outputConsole);
-
-        // ACT
-        mockMvc.perform(get("/consoles/manufacturer/{manufacturer}"))
+        mockMvc.perform(get("/consoles/3"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().json(outputJson));
+                .andExpect(content().json(expectedJson))
+                .andExpect(status().isOk());
     }
 
-    // Testing POST /consoles
-    @Test
-    public void shouldReturnNewRecordOnPostRequest() throws Exception {
 
-        // ARRANGE
-        Console inputConsole = new Console();
-        inputConsole.setModel("ipod");
-        inputConsole.setManufacturer("Samsung");
-        inputConsole.setMemory_amount("900GB");
-        inputConsole.setProcessor("AMV rising 7");
-        inputConsole.setPrice(89.0);
-        inputConsole.setQuantity(40);
-
-
-        // Convert Java Object to JSON.
-        String inputJson = mapper.writeValueAsString(inputConsole);
-
-        Console outputConsole = new Console();
-        outputConsole.setConsole_id(2);
-        outputConsole.setModel("ipod");
-        outputConsole.setManufacturer("Samsung");
-        outputConsole.setMemory_amount("900GB");
-        outputConsole.setProcessor("AMV rising 7");
-        outputConsole.setPrice(89.0);
-        outputConsole.setQuantity(40);
-
-        String outputJson = mapper.writeValueAsString(outputConsole);
-
-        // ACT
-        mockMvc.perform(
-                        post("/consoles")
-                                .content(inputJson)
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(content().json(outputJson));
-    }
-
-    // testing PUT /consoles/{id}
-    @Test
-    public void shouldUpdateByIdAndReturn204StatusCode() throws Exception {
-
-        // ARRANGE
-        Console inputConsole = new Console();
-        inputConsole.setModel("ipod");
-        inputConsole.setManufacturer("Samsung");
-        inputConsole.setMemory_amount("900GB");
-        inputConsole.setProcessor("AMV rising 7");
-        inputConsole.setPrice(89.0);
-        inputConsole.setQuantity(40);
-
-        String inputJson = mapper.writeValueAsString(inputConsole);
-
-        // ACT
-        mockMvc.perform(
-                        put("/consoles/2")
-                                .content(inputJson)
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isNoContent());
-
-        // ACT
-        mockMvc.perform(
-                        get("/consoles/2")
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(content().json(inputJson));
-    }
     // testing DELETE /consoles/{id}
     @Test
     public void shouldDeleteByIdAndReturn204StatusCode() throws Exception {
@@ -170,5 +120,8 @@ public class ConsoleControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }
+
+
+
 
 }

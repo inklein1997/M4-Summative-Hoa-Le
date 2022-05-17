@@ -26,11 +26,18 @@ public class ServiceLayer {
     InvoiceRepository invoiceRepository;
 
     @Autowired
+
+
+    public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository) {
+        this.gameRepository = gameRepository;
+        this.consoleRepository = consoleRepository;
+        this.tshirtRepository = tshirtRepository;
     public ServiceLayer(GameRepository gameRepository, TshirtRepository tshirtRepository, InvoiceRepository invoiceRepository) {
         this.gameRepository = gameRepository;
         this.tshirtRepository = tshirtRepository;
         this.invoiceRepository = invoiceRepository;
     }
+
 
     // CLEAR DATABASE
     public void clearDatabase() {
