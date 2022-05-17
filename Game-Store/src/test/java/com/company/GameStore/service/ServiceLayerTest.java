@@ -2,6 +2,8 @@ package com.company.GameStore.service;
 
 import com.company.GameStore.DTO.Game;
 import com.company.GameStore.DTO.Invoice;
+import com.company.GameStore.DTO.SalesTaxRate;
+import com.company.GameStore.repository.*;
 import com.company.GameStore.DTO.Tshirt;
 import com.company.GameStore.repository.ConsoleRepository;
 import com.company.GameStore.repository.GameRepository;
@@ -9,6 +11,7 @@ import com.company.GameStore.repository.InvoiceRepository;
 import com.company.GameStore.repository.TshirtRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.text.html.Option;
 import java.util.Arrays;
@@ -24,8 +27,8 @@ public class ServiceLayerTest {
     GameRepository gameRepository;
     ConsoleRepository consoleRepository;
     TshirtRepository tshirtRepository;
-    InvoiceRepository invoiceRepositor
-
+    InvoiceRepository invoiceRepository;
+    SalesTaxRateRepository salesTaxRateRepository;
 
     private Game expectedGame;
     private Optional<Game> actualGame;
@@ -35,6 +38,9 @@ public class ServiceLayerTest {
     private Invoice invoice1;
     private Invoice invoice2;
     private List<Invoice> invoiceList;
+
+    private double expectedTax;
+    private double actualTax;
 
     private List<Tshirt> tshirtList;
     private List<Tshirt> tshirtListByColorRed;
@@ -48,16 +54,11 @@ public class ServiceLayerTest {
     public void setUp() throws Exception {
         setUpGameRepositoryMock();
         setUpInvoiceRepositoryMock();
-
-
-        serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository);
-
-
+        setUpSalesTaxRateRepositoryMock();
         setUpTshirtRepositoryMock();
-
     }
 
-    serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository);
+   serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository, salesTaxRateRepository);
 
     private void setUpGameRepositoryMock() {
         gameRepository = mock(GameRepository.class);
@@ -83,14 +84,24 @@ public class ServiceLayerTest {
     private void setUpInvoiceRepositoryMock() {
         invoiceRepository = mock(InvoiceRepository.class);
 
-        invoice1 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
-        invoice2 = new Invoice(2, "Patrick Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Consoles", 1, 499.99, 2, 999.98, 80.00, 29.98, 1109.96);
+        invoice1 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        invoice2 = new Invoice(2, "Patrick Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Consoles", 1, 499.99, 2, 999.98, 80.00, 29.98, 1109.96);
 
         invoiceList = Arrays.asList(invoice1, invoice2);
 
         doReturn(invoiceList).when(invoiceRepository).findAll();
         doReturn(Optional.of(invoice1)).when(invoiceRepository).findById(1);
         doReturn(invoice1).when(invoiceRepository).save(invoice1);
+    }
+
+    private void setUpSalesTaxRateRepositoryMock() {
+        salesTaxRateRepository = mock(SalesTaxRateRepository.class);
+
+        invoice1 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        SalesTaxRate salesTaxRate = new SalesTaxRate("TX", .03);
+
+        doReturn(salesTaxRate).when(salesTaxRateRepository).findByState("TX");
+
     }
 
     //Ask About Optional.
@@ -225,8 +236,8 @@ public class ServiceLayerTest {
     @Test
     public void shouldFindAllInvoices() {
         List<Invoice> expectedInvoiceList = Arrays.asList(
-            new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8),
-            new Invoice(2, "Patrick Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Consoles", 1, 499.99, 2, 999.98, 80.00, 29.98, 1109.96)
+            new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8),
+            new Invoice(2, "Patrick Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Consoles", 1, 499.99, 2, 999.98, 80.00, 29.98, 1109.96)
         );
 
         List<Invoice> actualInvoiceList = serviceLayer.getAllInvoices();
@@ -236,7 +247,7 @@ public class ServiceLayerTest {
 
     @Test
     public void shouldFindInvoiceById() {
-        Invoice expectedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        Invoice expectedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
         Optional<Invoice> actualInvoice = serviceLayer.getInvoiceById(1);
 
         assertEquals(expectedInvoice, actualInvoice.get());
@@ -244,10 +255,19 @@ public class ServiceLayerTest {
 
     @Test
     public void shouldCreateInvoice() {
-        Invoice expectedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        Invoice expectedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
         Invoice savedInvoice = serviceLayer.addInvoice(new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8));
 
         assertEquals(expectedInvoice, savedInvoice);
+    }
+
+    @Test
+    public void shouldCalculateSalesTax() {
+        expectedTax = 15.00;
+        System.out.println(invoice1);
+        actualTax = serviceLayer.applyTaxRate(invoice1);
+
+        assertEquals(expectedTax, actualTax, .01);
     }
 
 
