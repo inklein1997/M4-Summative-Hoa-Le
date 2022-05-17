@@ -26,7 +26,9 @@ public class ServiceLayer {
     InvoiceRepository invoiceRepository;
 
     @Autowired
+
     public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository) {
+
         this.gameRepository = gameRepository;
         this.consoleRepository = consoleRepository;
         this.tshirtRepository = tshirtRepository;
