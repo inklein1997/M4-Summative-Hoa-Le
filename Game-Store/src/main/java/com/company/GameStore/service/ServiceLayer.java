@@ -22,15 +22,16 @@ public class ServiceLayer {
     ConsoleRepository consoleRepository;
     InvoiceRepository invoiceRepository;
     SalesTaxRateRepository salesTaxRateRepository;
+    ProcessingFeeRepository processingFeeRepository;
 
     @Autowired
-    public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository, SalesTaxRateRepository salesTaxRateRepository) {
-
+    public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository, SalesTaxRateRepository salesTaxRateRepository,ProcessingFeeRepository processingFeeRepository) {
         this.gameRepository = gameRepository;
         this.consoleRepository = consoleRepository;
         this.tshirtRepository = tshirtRepository;
         this.invoiceRepository = invoiceRepository;
         this.salesTaxRateRepository = salesTaxRateRepository;
+        this.processingFeeRepository = processingFeeRepository;
     }
 
     // CLEAR DATABASE
@@ -116,6 +117,7 @@ public class ServiceLayer {
     }
 
 
+
     public Invoice addInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
     @Transactional
     public void decreaseItemQuantity(Invoice invoice) {
@@ -157,33 +159,30 @@ public class ServiceLayer {
         // remainingAmount = avaiableAmount - requestedAmount
         // Save the remainingAmount on the item (Console/Game/Tshirt)
     }
-}
 
-<<<<<<< HEAD
 
-=======
+
     public Invoice addInvoice(Invoice invoice) {
         Invoice updatedInvoice = invoice;
         updatedInvoice.setTax(applyTaxRate(invoice));
-
+        updatedInvoice.setProcessing_fee(applyProcessingFee(invoice));
         return invoiceRepository.save(updatedInvoice);
     }
 
     public double applyTaxRate(Invoice invoice) {
         double priceBeforeTax = invoice.getQuantity() * invoice.getUnit_price();
-        System.out.println(priceBeforeTax);
-
-        SalesTaxRate salesTax = salesTaxRateRepository.findByState("TX");
-        System.out.println(salesTax.getRate());
-
-
-
-        System.out.println(salesTaxRateRepository.findByState("TX").getRate());
         double taxRate = salesTaxRateRepository.findByState(invoice.getState()).getRate();
-        System.out.println(taxRate);
         return priceBeforeTax * taxRate;
     }
 
+    public double applyProcessingFee(Invoice invoice){
+        double processingFee = processingFeeRepository.findByProductType(invoice.getItem_type()).getFee();
+        if (invoice.getQuantity() >10 ){
+            processingFee += 15.49;
+        }
+        return  processingFee;
+    }
+
 }
->>>>>>> 146300c33fecf062c832e9fefac9c19e293bb6da
+
 

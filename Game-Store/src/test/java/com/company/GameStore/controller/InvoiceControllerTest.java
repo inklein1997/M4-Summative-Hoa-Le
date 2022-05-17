@@ -1,11 +1,14 @@
 package com.company.GameStore.controller;
 
 import com.company.GameStore.DTO.Invoice;
+import com.company.GameStore.DTO.SalesTaxRate;
 import com.company.GameStore.service.ServiceLayer;
+import com.company.GameStore.service.TaxServiceLayer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,6 +36,9 @@ public class InvoiceControllerTest {
     @MockBean
     ServiceLayer serviceLayer;
 
+    @MockBean
+    TaxServiceLayer taxServiceLayer;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -52,16 +58,20 @@ public class InvoiceControllerTest {
     }
 
     private void setUpMocksForInvoiceRoutes() {
-        expectedInvoice1 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
-        expectedInvoice2 = new Invoice(2, "Patrick Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Consoles", 1, 499.99, 2, 999.98, 80.00, 29.98, 1109.96);
+        expectedInvoice1 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        expectedInvoice2 = new Invoice(2, "Patrick Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Consoles", 1, 499.99, 2, 999.98, 80.00, 29.98, 1109.96);
 
-        inputtedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        inputtedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
 
         invoiceList = Arrays.asList(expectedInvoice1, expectedInvoice2);
+
+        SalesTaxRate salesTaxRate = new SalesTaxRate("TX",.03);
 
         when(serviceLayer.getAllInvoices()).thenReturn(invoiceList);
         when(serviceLayer.getInvoiceById(1)).thenReturn(Optional.of(expectedInvoice1));
         when(serviceLayer.addInvoice(inputtedInvoice)).thenReturn(expectedInvoice1);
+        when(taxServiceLayer.findSalesTaxRateByState("TX")).thenReturn(salesTaxRate);
+        when(taxServiceLayer.findSalesTaxRateByState("NOTASTATECODE")).thenReturn(null);
     }
 
     /* ============================= TESTING GET ROUTES ============================= */
@@ -122,6 +132,32 @@ public class InvoiceControllerTest {
         mockMvc.perform(post("/invoices")
                 .content(inputtedJson)
                 .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void shouldReturnStatus404ForInvalidStateCode() throws Exception {
+        inputtedInvoice.setState("AA");
+
+        inputtedJson = mapper.writeValueAsString(inputtedInvoice);
+
+        mockMvc.perform(post("/invoices")
+                .content(inputtedJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturnStatus422ForQuantityThatIsLessThen1() throws Exception {
+        inputtedInvoice.setQuantity(0);
+        System.out.println(inputtedInvoice);
+        inputtedJson = mapper.writeValueAsString(inputtedInvoice);
+
+        mockMvc.perform(post("/invoices")
+                        .content(inputtedJson)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
     }
