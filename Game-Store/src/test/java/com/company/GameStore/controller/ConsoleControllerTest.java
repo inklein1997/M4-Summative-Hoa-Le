@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,14 +56,14 @@ public class ConsoleControllerTest {
 
     private void setUpMocksForGetRoutes() {
         expectedConsoleList = (List<Game>) Arrays.asList(
-                new Console(),
-                new Console(),
-                new Console()
+                new Console();
+                new Console();
+                new Console();
         );
 
         expectedConsoleListByManufacturer = Arrays.asList(
-                new Console(),
-                new Console(2)
+                new Console();
+                new Console();
         );
 
 
@@ -79,7 +80,7 @@ public class ConsoleControllerTest {
     }
 
 
-    //Testing GET Routes for Successful routing
+    //Testing GET Routes for Controller Success
     @Test
     public void shouldReturnListOfAllConsolesAndStatus200() throws Exception {
         expectedJson = mapper.writeValueAsString(expectedConsoleList);
@@ -102,7 +103,7 @@ public class ConsoleControllerTest {
 
 
     @Test
-    public void shouldReturnGameByIdAndStatus200() throws Exception {
+    public void shouldReturnConsoleByIdAndStatus200() throws Exception {
         expectedJson = mapper.writeValueAsString(expectedConsole);
 
         mockMvc.perform(get("/consoles/3"))
@@ -110,6 +111,49 @@ public class ConsoleControllerTest {
                 .andExpect(content().json(expectedJson))
                 .andExpect(status().isOk());
     }
+
+    //Testing GET Routes for Controller Failures
+    @Test
+    public void shouldReturn404StatusCodeIfConsoleManufacturerDoesNotExist() throws Exception {
+        mockMvc.perform(get("/consoles/title/unknown"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+
+    //Testing POST Routes for Controller Success
+    @Test
+    public void shouldReturnConsoleOnPostRequestAndStatus201() throws Exception {
+        expectedJson = mapper.writeValueAsString(expectedConsole);
+        inputtedJson = mapper.writeValueAsString(inputtedConsole);
+
+        mockMvc.perform(post("/consoles")
+                        .content(inputtedJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(content().json(expectedJson))
+                .andExpect(status().isCreated());
+    }
+
+    //Testing POST Routes for Controller Failures
+    @Test
+    public void ShouldReturnStatus422ForInvalidRequestBodyOnPostRequest() throws Exception {
+        HashMap<String, Object> invalidRequestBody = new HashMap();
+        invalidRequestBody.put("id", Integer.parseInt("85"));
+        invalidRequestBody.put("manufacturer", "Unknown");
+
+
+        inputtedJson = mapper.writeValueAsString(invalidRequestBody);
+
+        mockMvc.perform(post("/consoles")
+                        .content(inputtedJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+
+
 
 
     // testing DELETE /consoles/{id}
