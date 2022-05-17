@@ -5,6 +5,7 @@ import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -18,14 +19,16 @@ public class Console {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @NotNull
     private int console_id;
-    @NotNull
+    @NotBlank
     @Size(max = 50)
     private String model;
-    @NotNull
+    @NotBlank
     @Size(max = 50)
     private String manufacturer;
+    @NotBlank
     @Size(max = 20)
     private String memory_amount;
+    @NotBlank
     @Size(max = 20)
     private String processor;
     @NotNull
@@ -39,6 +42,15 @@ public class Console {
 
     public Console(int console_id, String model, String manufacturer, String memory_amount, String processor, double price, int quantity) {
         this.console_id = console_id;
+        this.model = model;
+        this.manufacturer = manufacturer;
+        this.memory_amount = memory_amount;
+        this.processor = processor;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public Console(String model, String manufacturer, String memory_amount, String processor, double price, int quantity) {
         this.model = model;
         this.manufacturer = manufacturer;
         this.memory_amount = memory_amount;
@@ -108,7 +120,7 @@ public class Console {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Console console = (Console) o;
-        return console_id == console.console_id && memory_amount == console.memory_amount && Double.compare(console.price, price) == 0 && quantity == console.quantity && Objects.equals(model, console.model) && Objects.equals(manufacturer, console.manufacturer) && Objects.equals(processor, console.processor);
+        return console_id == console.console_id && Double.compare(console.price, price) == 0 && quantity == console.quantity && Objects.equals(model, console.model) && Objects.equals(manufacturer, console.manufacturer) && Objects.equals(memory_amount, console.memory_amount) && Objects.equals(processor, console.processor);
     }
 
     @Override
@@ -129,6 +141,5 @@ public class Console {
                 '}';
     }
 
-    public void setDescription(String new_description) {
-    }
+
 }
