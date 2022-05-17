@@ -100,7 +100,7 @@ public class ServiceLayerTest {
         invoice1 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
         SalesTaxRate salesTaxRate = new SalesTaxRate("TX", .03);
 
-        doReturn(salesTaxRate).when(salesTaxRateRepository).findByState(invoice1.getState());
+        doReturn(salesTaxRate).when(salesTaxRateRepository).findByState("TX");
 
     }
 
