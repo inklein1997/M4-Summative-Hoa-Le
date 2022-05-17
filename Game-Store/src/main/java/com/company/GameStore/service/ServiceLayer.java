@@ -3,10 +3,13 @@ package com.company.GameStore.service;
 import com.company.GameStore.DTO.Console;
 import com.company.GameStore.DTO.Game;
 
+import com.company.GameStore.DTO.Invoice;
+import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.repository.ConsoleRepository;
 
 import com.company.GameStore.DTO.Tshirt;
 import com.company.GameStore.repository.GameRepository;
+import com.company.GameStore.repository.InvoiceRepository;
 import com.company.GameStore.repository.TshirtRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,13 +23,19 @@ public class ServiceLayer {
     TshirtRepository tshirtRepository;
     GameRepository gameRepository;
     ConsoleRepository consoleRepository;
+    InvoiceRepository invoiceRepository;
 
     @Autowired
+
 
     public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository) {
         this.gameRepository = gameRepository;
         this.consoleRepository = consoleRepository;
         this.tshirtRepository = tshirtRepository;
+    public ServiceLayer(GameRepository gameRepository, TshirtRepository tshirtRepository, InvoiceRepository invoiceRepository) {
+        this.gameRepository = gameRepository;
+        this.tshirtRepository = tshirtRepository;
+        this.invoiceRepository = invoiceRepository;
     }
 
 
@@ -34,6 +43,7 @@ public class ServiceLayer {
     public void clearDatabase() {
         gameRepository.deleteAll();
         tshirtRepository.deleteAll();
+        invoiceRepository.deleteAll();
     }
 
     //Jpa Searches
@@ -43,12 +53,16 @@ public class ServiceLayer {
 
     //TShirt CRUD
     public List<Tshirt> getAllTshirt(){return tshirtRepository.findAll();}
-    public Optional<Tshirt> getSingleTshirt(int id) {return tshirtRepository.findById(id);}
+    public Optional<Tshirt> getSingleTshirt(int id) {
+        Optional<Tshirt> tshirt = tshirtRepository.findById(id);
+        return tshirt.isPresent()? Optional.of(tshirt.get()) : null;
+    }
     public Tshirt addTshirt(Tshirt tshirt) {return tshirtRepository.save(tshirt);}
 
     public void updateTshirt(Tshirt tshirt) {tshirtRepository.save(tshirt);}
 
     public void deleteTshirt(int id) {tshirtRepository.deleteById(id);}
+
     // GAME CRUD OPERATIONS
     public List<Game> getAllGames() {return gameRepository.findAll();}
 
@@ -60,23 +74,15 @@ public class ServiceLayer {
 
     public Optional<Game> getGameByTitle(String title) { return gameRepository.findByTitle(title); }
 
-    public Optional<Game> getSingleGame(int id) {
-        return gameRepository.findById(id);
-    }
+    public Optional<Game> getSingleGame(int id) { return gameRepository.findById(id); }
 
-    public Game addGame(Game game) {
-        return gameRepository.save(game);
-    }
+    public Game addGame(Game game) { return gameRepository.save(game); }
 
-    public void updateGame(Game game) {
-        gameRepository.save(game);
-    }
+    public void updateGame(Game game) { gameRepository.save(game); }
 
-    public void deleteGame(int id) {
-        gameRepository.deleteById(id);
-    }
+    public void deleteGame(int id) { gameRepository.deleteById(id); }
 
-
+    // CONSOLE CRUD OPERATIONS  
     public List<Console> getConsolesByManufacturer(String manufacturer) {
         return consoleRepository.findByManufacturer(manufacturer);
     }
@@ -99,5 +105,17 @@ public class ServiceLayer {
     public void deleteConsole(int id) {
     }
 
+    // Invoice CRUD -- Do not need to update / delete
+
+    public List<Invoice> getAllInvoices() { return invoiceRepository.findAll(); }
+
+    public Optional<Invoice> getInvoiceById(int id) {
+        if (invoiceRepository.findById(id).orElse(null) == null) {
+            throw new QueryNotFoundException("An invoice with that ID does not exist yet.");
+        }
+        return invoiceRepository.findById(id);
+    }
+
+    public Invoice addInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
 
 }
