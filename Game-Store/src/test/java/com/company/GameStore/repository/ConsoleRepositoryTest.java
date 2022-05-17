@@ -31,7 +31,7 @@ public class ConsoleRepositoryTest {
     public void setUp() {
         consoleRepository.deleteAll();
 
-        console = consoleRepository.save(new Console("PS4", ));
+        console = consoleRepository.save(new Console();
         anotherConsole = consoleRepository.save(new Console(3, "PS4", "Sony", "1TB", "Dual Shock", "579.00", 55));
 
         expectedConsoleList.clear();

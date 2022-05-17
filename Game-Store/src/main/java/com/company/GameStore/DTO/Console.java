@@ -128,4 +128,7 @@ public class Console {
                 ", quantity=" + quantity +
                 '}';
     }
+
+    public void setDescription(String new_description) {
+    }
 }

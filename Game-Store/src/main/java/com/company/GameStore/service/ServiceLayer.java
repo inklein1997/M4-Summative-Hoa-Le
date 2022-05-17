@@ -105,6 +105,8 @@ public class ServiceLayer {
     public void deleteConsole(int id) {
     }
 
+
+
     // Invoice CRUD -- Do not need to update / delete
 
     public List<Invoice> getAllInvoices() { return invoiceRepository.findAll(); }
