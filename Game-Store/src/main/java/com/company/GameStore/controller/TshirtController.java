@@ -1,7 +1,10 @@
 package com.company.GameStore.controller;
 
 import com.company.GameStore.DTO.Tshirt;
+import com.company.GameStore.exception.NoRecordFoundException;
+import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.service.ServiceLayer;
+import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -38,6 +41,10 @@ public class TshirtController {
     @GetMapping("/tshirts/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Optional<Tshirt> getTshirtById(@PathVariable int id){
+        if (service.getSingleTshirt(id).orElse(null) == null)// clarify.
+        {
+            throw new NoRecordFoundException("Tshirt id " + id + " is not found.");
+        }
         return service.getSingleTshirt(id);
     }
 
@@ -45,15 +52,16 @@ public class TshirtController {
     @PostMapping("/tshirts")
     @ResponseStatus(HttpStatus.CREATED)
     public  Tshirt createTshirt(@RequestBody @Valid Tshirt tshirt){
-
-        try{return service.addTshirt(tshirt);}catch (InputMismatchException e){
+        try{
+            return service.addTshirt(tshirt);
+        }catch (InputMismatchException e){
             throw e;
         }
     }
 
     @PutMapping("/tshirts/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateTshirt (@RequestBody Tshirt tshirt, @PathVariable int id){
+    public void updateTshirt (@Valid @RequestBody Tshirt tshirt, @PathVariable int id){
         if (tshirt.getId() == null){
             tshirt.setId(id);
         }
@@ -66,6 +74,9 @@ public class TshirtController {
     @DeleteMapping("/tshirts/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTshirt(@PathVariable int id){
+        if (service.getSingleTshirt(id).orElse(null)==null){
+            throw new NoRecordFoundException("Tshirt record not found");
+        }
         service.deleteTshirt(id);
     }
 }
