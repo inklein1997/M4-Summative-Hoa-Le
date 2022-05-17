@@ -6,6 +6,7 @@ import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -19,11 +20,10 @@ public class ServiceLayer {
     GameRepository gameRepository;
     ConsoleRepository consoleRepository;
     InvoiceRepository invoiceRepository;
-    @Autowired
     SalesTaxRateRepository salesTaxRateRepository;
 
     @Autowired
-    public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository) {
+    public ServiceLayer(GameRepository gameRepository, ConsoleRepository consoleRepository, TshirtRepository tshirtRepository,InvoiceRepository invoiceRepository, SalesTaxRateRepository salesTaxRateRepository) {
 
         this.gameRepository = gameRepository;
         this.consoleRepository = consoleRepository;
@@ -110,11 +110,19 @@ public class ServiceLayer {
         return invoiceRepository.findById(id);
     }
 
-    public Invoice addInvoice(Invoice invoice) { return invoiceRepository.save(invoice); }
+    public Invoice addInvoice(Invoice invoice) {
+        Invoice updatedInvoice = invoice;
+        updatedInvoice.setTax(applyTaxRate(invoice));
 
-    private double applyTaxRate(Invoice invoice) {
+        return invoiceRepository.save(updatedInvoice);
+    }
+
+    public double applyTaxRate(Invoice invoice) {
         double priceBeforeTax = invoice.getQuantity() * invoice.getUnit_price();
+        System.out.println(priceBeforeTax);
+        System.out.println(salesTaxRateRepository.findByState("TX").getRate());
         double taxRate = salesTaxRateRepository.findByState(invoice.getState()).getRate();
+        System.out.println(taxRate);
         return priceBeforeTax * taxRate;
     }
 
