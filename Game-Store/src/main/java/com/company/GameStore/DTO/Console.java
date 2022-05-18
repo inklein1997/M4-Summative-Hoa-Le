@@ -36,6 +36,9 @@ public class Console {
     @NotNull
     private int quantity;
 
+    public Console() {
+    }
+
     public Console(int console_id, String model, String manufacturer, String memory_amount, String processor, double price, int quantity) {
         this.console_id = console_id;
         this.model = model;
