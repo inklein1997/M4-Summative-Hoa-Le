@@ -15,9 +15,10 @@ import java.util.Objects;
 public class Console {
 
     @Id
+    @Column(name = "console_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @NotNull
-    private int console_id;
+    private int id;
     @NotBlank
     @Size(max = 50)
     private String model;
@@ -36,11 +37,8 @@ public class Console {
     @NotNull
     private int quantity;
 
-    public Console() {
-    }
-
-    public Console(int console_id, String model, String manufacturer, String memory_amount, String processor, double price, int quantity) {
-        this.console_id = console_id;
+    public Console(int id, String model, String manufacturer, String memory_amount, String processor, double price, int quantity) {
+        this.id = id;
         this.model = model;
         this.manufacturer = manufacturer;
         this.memory_amount = memory_amount;
@@ -58,12 +56,15 @@ public class Console {
         this.quantity = quantity;
     }
 
-    public int getConsole_id() {
-        return console_id;
+    public Console() {
     }
 
-    public void setConsole_id(int console_id) {
-        this.console_id = console_id;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getModel() {
@@ -119,18 +120,18 @@ public class Console {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Console console = (Console) o;
-        return console_id == console.console_id && Double.compare(console.price, price) == 0 && quantity == console.quantity && Objects.equals(model, console.model) && Objects.equals(manufacturer, console.manufacturer) && Objects.equals(memory_amount, console.memory_amount) && Objects.equals(processor, console.processor);
+        return id == console.id && Double.compare(console.price, price) == 0 && quantity == console.quantity && Objects.equals(model, console.model) && Objects.equals(manufacturer, console.manufacturer) && Objects.equals(memory_amount, console.memory_amount) && Objects.equals(processor, console.processor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(console_id, model, manufacturer, memory_amount, processor, price, quantity);
+        return Objects.hash(id, model, manufacturer, memory_amount, processor, price, quantity);
     }
 
     @Override
     public String toString() {
         return "Console{" +
-                "console_id=" + console_id +
+                "id=" + id +
                 ", model='" + model + '\'' +
                 ", manufacturer='" + manufacturer + '\'' +
                 ", memory_amount='" + memory_amount + '\'' +

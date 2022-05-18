@@ -51,10 +51,10 @@ public class ConsoleController {
     @PutMapping("/consoles/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateConsole(@RequestBody @Valid Console console, @PathVariable int id) {
-        if (console.getConsole_id() == 0) {
-            console.setConsole_id(id);
+        if (console.getId() == 0) {
+            console.setId(id);
         }
-        if (id != console.getConsole_id()) {
+        if (id != console.getId()) {
             throw new DataIntegrityViolationException("Your request body ID does not match your Path Variable id");
         }
         service.updateConsole(console);

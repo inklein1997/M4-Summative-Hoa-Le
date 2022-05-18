@@ -62,10 +62,10 @@ public class GameController {
     @PutMapping("/games/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateGame(@Valid @RequestBody Game game, @PathVariable int id) {
-        if (game.getGame_id() == null) {
-            game.setGame_id(id);
+        if (game.getId() == null) {
+            game.setId(id);
         }
-        if (id != game.getGame_id()) {
+        if (id != game.getId()) {
             throw new DataIntegrityViolationException("Your request body ID does not match your Path Variable id");
         }
         if (service.getSingleGame(id).orElse(null) == null) {

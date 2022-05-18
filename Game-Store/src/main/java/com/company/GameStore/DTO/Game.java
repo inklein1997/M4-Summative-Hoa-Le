@@ -13,9 +13,10 @@ import java.util.Objects;
 @Table(name = "game")
 public class Game {
     @Id
+    @Column(name = "game_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @NotNull
-    private Integer game_id;
+    private Integer id;
     @NotNull
     @Size(max = 50)
     private String title;
@@ -35,14 +36,7 @@ public class Game {
     @NotNull
     private int quantity;
 
-    public Game(Integer game_id, String title, String esrbRating, String description, double price, String studio, int quantity) {
-        this.game_id = game_id;
-        this.title = title;
-        this.esrbRating = esrbRating;
-        this.description = description;
-        this.price = price;
-        this.studio = studio;
-        this.quantity = quantity;
+    public Game() {
     }
 
     public Game(String title, String esrbRating, String description, double price, String studio, int quantity) {
@@ -54,15 +48,22 @@ public class Game {
         this.quantity = quantity;
     }
 
-    public Game() {
+    public Game(Integer id, String title, String esrbRating, String description, double price, String studio, int quantity) {
+        this.id = id;
+        this.title = title;
+        this.esrbRating = esrbRating;
+        this.description = description;
+        this.price = price;
+        this.studio = studio;
+        this.quantity = quantity;
     }
 
-    public Integer getGame_id() {
-        return game_id;
+    public Integer getId() {
+        return id;
     }
 
-    public void setGame_id(Integer game_id) {
-        this.game_id = game_id;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -118,18 +119,18 @@ public class Game {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Game game = (Game) o;
-        return Double.compare(game.price, price) == 0 && quantity == game.quantity && Objects.equals(game_id, game.game_id) && Objects.equals(title, game.title) && Objects.equals(esrbRating, game.esrbRating) && Objects.equals(description, game.description) && Objects.equals(studio, game.studio);
+        return Double.compare(game.price, price) == 0 && quantity == game.quantity && Objects.equals(id, game.id) && Objects.equals(title, game.title) && Objects.equals(esrbRating, game.esrbRating) && Objects.equals(description, game.description) && Objects.equals(studio, game.studio);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(game_id, title, esrbRating, description, price, studio, quantity);
+        return Objects.hash(id, title, esrbRating, description, price, studio, quantity);
     }
 
     @Override
     public String toString() {
         return "Game{" +
-                "game_id=" + game_id +
+                "id=" + id +
                 ", title='" + title + '\'' +
                 ", esrbRating='" + esrbRating + '\'' +
                 ", description='" + description + '\'' +
