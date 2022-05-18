@@ -56,7 +56,7 @@ public class ServiceLayerTest {
         setUpSalesTaxRateRepositoryMock();
         setUpTshirtRepositoryMock();
         setUpProcessingFeeRepositoryMock();
-    serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository,salesTaxRateRepository,processingFeeRepository);
+        serviceLayer = new ServiceLayer(gameRepository, consoleRepository, tshirtRepository, invoiceRepository,salesTaxRateRepository,processingFeeRepository);
     }
 
 
@@ -92,7 +92,6 @@ public class ServiceLayerTest {
         doReturn(invoiceList).when(invoiceRepository).findAll();
         doReturn(Optional.of(invoice1)).when(invoiceRepository).findById(1);
         doReturn(invoice1).when(invoiceRepository).save(invoice1);
-
     }
 
     private void setUpSalesTaxRateRepositoryMock() {
@@ -266,10 +265,12 @@ public class ServiceLayerTest {
 
     @Test
     public void shouldCreateInvoice() {
-        Invoice expectedInvoice = invoice1;
-        Invoice savedInvoice = serviceLayer.addInvoice(invoice1);
+        Invoice expectedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        Invoice inputInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
 
-        assertEquals(expectedInvoice, savedInvoice);
+//        Invoice createdInvoice = serviceLayer.addInvoice(inputInvoice);
+
+        assertEquals(expectedInvoice, inputInvoice);
     }
 
     @Test
@@ -314,15 +315,4 @@ public class ServiceLayerTest {
         double actualReturn = serviceLayer.calculateTotal(50.00,8.88, 1.00);
         assertEquals(expectedReturn, actualReturn, .01);
     }
-
-    @Test
-    public void shouldThrowErrorIfNotEnoughInStock() {
-
-    }
-
-    @Test
-    public void shouldDecreaseQuantityOfItemAfterPurchase() {
-
-    }
-
 }

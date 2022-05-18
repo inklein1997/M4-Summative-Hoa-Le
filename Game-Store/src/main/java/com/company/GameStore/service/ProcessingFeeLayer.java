@@ -1,5 +1,6 @@
 package com.company.GameStore.service;
 
+import com.company.GameStore.DTO.Invoice;
 import com.company.GameStore.DTO.ProcessingFee;
 import com.company.GameStore.DTO.SalesTaxRate;
 import com.company.GameStore.repository.ProcessingFeeRepository;
@@ -10,6 +11,10 @@ import org.springframework.stereotype.Service;
 public class ProcessingFeeLayer {
     @Autowired
     ProcessingFeeRepository processingFeeRepository;
+
+    public ProcessingFee findProcessingFee(Invoice invoice) {
+        return processingFeeRepository.findByProductType(invoice.getItem_type());
+    }
 
     public void loadFee(){
         processingFeeRepository.deleteAll();

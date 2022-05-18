@@ -2,6 +2,7 @@ package com.company.GameStore.controller;
 
 import com.company.GameStore.DTO.CustomErrorResponse;
 import com.company.GameStore.exception.NoRecordFoundException;
+import com.company.GameStore.exception.NotEnoughInStockException;
 import com.company.GameStore.exception.QueryNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -57,14 +58,23 @@ public class ControllerExceptionHandler {
         return responseEntity;
     }
 
+    @ExceptionHandler(value = NotEnoughInStockException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public ResponseEntity<CustomErrorResponse> notEnoughUnitsForUserRequest(NotEnoughInStockException e) {
+        CustomErrorResponse error = new CustomErrorResponse(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage());
+        error.setStatus((HttpStatus.NOT_ACCEPTABLE.value()));
+        error.setTimestamp(LocalDateTime.now());
+        ResponseEntity<CustomErrorResponse> responseEntity = new ResponseEntity<>(error, HttpStatus.NOT_ACCEPTABLE);
+        return responseEntity;
+    }
+
+
     @ExceptionHandler(value = InputMismatchException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseEntity<CustomErrorResponse> invalidInputTypeException(InputMismatchException e) {
         CustomErrorResponse error = new CustomErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.toString(), e.getMessage());
         error.setStatus((HttpStatus.UNPROCESSABLE_ENTITY.value()));
         error.setTimestamp(LocalDateTime.now());
-//        error.setErrorCode("422 UNPROCESSABLE_ENTITY");
-//        error.setErrorMsg("Number Value only");
         ResponseEntity<CustomErrorResponse> responseEntity = new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
         return responseEntity;
     }

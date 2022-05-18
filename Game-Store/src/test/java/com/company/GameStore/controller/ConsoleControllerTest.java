@@ -46,9 +46,6 @@ public class ConsoleControllerTest {
     private String expectedJson;
     private String inputtedJson;
 
-
-
-
     @Before
     public void setUp() {
         serviceLayer.clearDatabase();
@@ -57,30 +54,23 @@ public class ConsoleControllerTest {
 
     private void setUpMocksForGetRoutes() {
         expectedConsoleList = (List<Console>) Arrays.asList(
-                new Console(2, "PS4", "Sony", "1TB", "Dual", 579.00, 50),
-                new Console(3, "Wii U", "Nintendo", "32GB", "Dual", 244.99, 60),
-                new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", 739.99, 65)
-
-                );
-
-        expectedConsoleListByManufacturer = Arrays.asList(
-                new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", 739.99, 65)
-
+            new Console(2, "PS4", "Sony", "1TB", "Dual", 579.00, 50),
+            new Console(3, "Wii U", "Nintendo", "32GB", "Dual", 244.99, 60),
+            new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", 739.99, 65)
         );
 
-
+        expectedConsoleListByManufacturer = Arrays.asList(
+            new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", 739.99, 65)
+        );
 
         expectedConsole = new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", 739.99, 65);
-
         inputtedConsole = new Console(4, "SSD Black Xbox", "Microsoft", "1TB", "Dual", 739.99, 65);
 
         when(serviceLayer.getAllConsoles()).thenReturn(expectedConsoleList);
         when(serviceLayer.getConsolesByManufacturer("Microsoft")).thenReturn(expectedConsoleListByManufacturer);
         when(serviceLayer.getSingleConsole(4)).thenReturn(Optional.of(expectedConsole));
         when(serviceLayer.addConsole(inputtedConsole)).thenReturn(expectedConsole);
-
     }
-
 
     //Testing GET Routes for Controller Success
     @Test
@@ -103,7 +93,6 @@ public class ConsoleControllerTest {
                 .andExpect(status().isOk());
     }
 
-
     @Test
     public void shouldReturnConsoleByIdAndStatus200() throws Exception {
         expectedJson = mapper.writeValueAsString(expectedConsole);
@@ -121,7 +110,6 @@ public class ConsoleControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
-
 
     //Testing POST Routes for Controller Success
     @Test
@@ -141,9 +129,8 @@ public class ConsoleControllerTest {
     @Test
     public void ShouldReturnStatus422ForInvalidRequestBodyOnPostRequest() throws Exception {
         HashMap<String, Object> invalidRequestBody = new HashMap();
-        invalidRequestBody.put("id", Integer.parseInt("85"));
-        invalidRequestBody.put("manufacturer", "Unknown");
-
+        invalidRequestBody.put("title", "FakeGameTitle1223");
+        invalidRequestBody.put("releaseData", "2022-10-12");
 
         inputtedJson = mapper.writeValueAsString(invalidRequestBody);
 
@@ -153,6 +140,7 @@ public class ConsoleControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
     }
+
     //Testing PUT Routes for Controller Success
     @Test
     public void shouldRespondWithStatus204WithValidPutRequest() throws Exception {
@@ -192,9 +180,6 @@ public class ConsoleControllerTest {
                 .andExpect(status().isUnprocessableEntity());
     }
 
-
-
-
     // testing DELETE /consoles/{id}
     @Test
     public void shouldDeleteByIdAndReturn204StatusCode() throws Exception {
@@ -203,10 +188,6 @@ public class ConsoleControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }
-
-
-
-
 }
 
 

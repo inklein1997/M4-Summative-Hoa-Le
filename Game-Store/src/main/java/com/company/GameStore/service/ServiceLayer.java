@@ -5,6 +5,7 @@ import com.company.GameStore.DTO.*;
 import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.repository.*;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate5.HibernateTemplate;
@@ -124,23 +125,18 @@ public class ServiceLayer {
     }
 
     public Invoice addInvoice(Invoice invoice) {
-        System.out.println("================================================");
-        System.out.println(invoice);
         Invoice updatedInvoice = invoice;
         double salesTax = applyTaxRate(invoice);
         double processingFee = applyProcessingFee(invoice);
         double subtotal = calculateSubtotal(invoice);
         double total = calculateTotal(subtotal, processingFee, salesTax);
-        System.out.println("-------------------------------------------");
-        System.out.println(updatedInvoice);
 
         updatedInvoice.setTax(salesTax);
         updatedInvoice.setProcessing_fee(processingFee);
         updatedInvoice.setSubtotal(subtotal);
         updatedInvoice.setTotal(total);
-        System.out.println("00000000000000000000000000000000000000000000000000000000000000000000000000000");
-        System.out.println(updatedInvoice);
 
+        decreaseItemQuantity(updatedInvoice);
         return invoiceRepository.save(updatedInvoice);
     }
 
@@ -152,27 +148,22 @@ public class ServiceLayer {
     public double applyTaxRate(Invoice invoice) {
         double priceBeforeTax = invoice.getQuantity() * invoice.getUnit_price();
         double taxRate = salesTaxRateRepository.findByState(invoice.getState()).getRate();
-        System.out.println("APPLYING TAX RATE!");
         return formatDouble(priceBeforeTax * taxRate);
     }
 
     public double applyProcessingFee(Invoice invoice){
         double processingFee = processingFeeRepository.findByProductType(invoice.getItem_type()).getFee();
-        System.out.println(processingFee);
         if (invoice.getQuantity() >10 ){
             processingFee += 15.49;
         }
-        System.out.println("APPLYING PROCESSING FEE!");
         return  formatDouble(processingFee);
     }
 
     public double calculateTotal(double subtotal, double processingFee, double salesTax) {
-        System.out.println("CALCULATING TOTAL");
         return formatDouble(subtotal + processingFee + salesTax);
     }
 
     public double calculateSubtotal(Invoice invoice) {
-        System.out.println("CALCULATING SUBTOTAL");
         return formatDouble(invoice.getQuantity() * invoice.getUnit_price());
     }
 
@@ -181,6 +172,21 @@ public class ServiceLayer {
             return availableAmount - requestedAmount;
         } else {
             throw new DataIntegrityViolationException("Unfortunately, there is not enough of that item in stock to purchase that many.  Please add to stock or order less");
+        }
+    }
+
+    public int getItemQuantity(Invoice invoice) {
+        int itemId = invoice.getItem_id();
+
+        switch (invoice.getItem_type()) {
+            case "Games" :
+                return getSingleGame(itemId).get().getQuantity();
+            case "T-shirts" :
+                return getSingleTshirt(itemId).get().getQuantity();
+            case "Consoles" :
+                return getSingleConsole(itemId).get().getQuantity();
+            default:
+                return -1;
         }
     }
 
@@ -204,7 +210,7 @@ public class ServiceLayer {
                 console.setQuantity(updatedAmount);
                 updateConsole(console);
                 break;
-            case "Tshirts":
+            case "T-shirts":
                 Tshirt tshirt = getSingleTshirt(invoice.getItem_id()).get();
                 availableAmount = tshirt.getQuantity();
                 updatedAmount = availableAmount - requestedAmount;
