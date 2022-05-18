@@ -1,7 +1,9 @@
 package com.company.GameStore.controller;
 
 import com.company.GameStore.DTO.Invoice;
+import com.company.GameStore.DTO.ProcessingFee;
 import com.company.GameStore.DTO.SalesTaxRate;
+import com.company.GameStore.service.ProcessingFeeLayer;
 import com.company.GameStore.service.ServiceLayer;
 import com.company.GameStore.service.TaxServiceLayer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,10 +60,10 @@ public class InvoiceControllerTest {
     }
 
     private void setUpMocksForInvoiceRoutes() {
-        expectedInvoice1 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
-        expectedInvoice2 = new Invoice(2, "Patrick Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Consoles", 1, 499.99, 2, 999.98, 80.00, 29.98, 1109.96);
+        expectedInvoice1 = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 1.49, 554.8);
+        expectedInvoice2 = new Invoice(2, "Patrick Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Consoles", 1, 499.99, 2, 999.98, 80.00, 14.49, 1109.96);
 
-        inputtedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
+        inputtedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10);
 
         invoiceList = Arrays.asList(expectedInvoice1, expectedInvoice2);
 
@@ -72,6 +74,8 @@ public class InvoiceControllerTest {
         when(serviceLayer.addInvoice(inputtedInvoice)).thenReturn(expectedInvoice1);
         when(taxServiceLayer.findSalesTaxRateByState("TX")).thenReturn(salesTaxRate);
         when(taxServiceLayer.findSalesTaxRateByState("NOTASTATECODE")).thenReturn(null);
+        when(serviceLayer.applyProcessingFee(inputtedInvoice)).thenReturn(1.49);
+        when(serviceLayer.getItemQuantity(inputtedInvoice)).thenReturn(100);
     }
 
     /* ============================= TESTING GET ROUTES ============================= */
@@ -160,5 +164,19 @@ public class InvoiceControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void shouldReturnStatus406WithQuantityGreaterThanAvailable() throws Exception {
+        inputtedInvoice.setQuantity(101);
+
+        inputtedJson = mapper.writeValueAsString(inputtedInvoice);
+        expectedJson = mapper.writeValueAsString(expectedInvoice1);
+
+        mockMvc.perform(post("/invoices")
+                        .content(inputtedJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotAcceptable());
     }
 }

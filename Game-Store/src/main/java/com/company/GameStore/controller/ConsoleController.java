@@ -43,7 +43,7 @@ public class ConsoleController {
 
     @PostMapping("/consoles")
     @ResponseStatus(HttpStatus.CREATED)
-    public Console createConsole(@RequestBody @Valid Console console) {
+    public Console createConsole(@Valid @RequestBody Console console) {
         System.out.println(console);
         return service.addConsole(console);
     }

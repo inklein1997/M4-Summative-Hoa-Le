@@ -5,12 +5,16 @@ import com.company.GameStore.DTO.*;
 import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.repository.*;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -122,7 +126,6 @@ public class ServiceLayer {
 
     public Invoice addInvoice(Invoice invoice) {
         Invoice updatedInvoice = invoice;
-
         double salesTax = applyTaxRate(invoice);
         double processingFee = applyProcessingFee(invoice);
         double subtotal = calculateSubtotal(invoice);
@@ -133,13 +136,19 @@ public class ServiceLayer {
         updatedInvoice.setSubtotal(subtotal);
         updatedInvoice.setTotal(total);
 
+        decreaseItemQuantity(updatedInvoice);
         return invoiceRepository.save(updatedInvoice);
+    }
+
+
+    public double formatDouble(double d) {
+        return Double.parseDouble(String.format("%,.2f", d));
     }
 
     public double applyTaxRate(Invoice invoice) {
         double priceBeforeTax = invoice.getQuantity() * invoice.getUnit_price();
         double taxRate = salesTaxRateRepository.findByState(invoice.getState()).getRate();
-        return priceBeforeTax * taxRate;
+        return formatDouble(priceBeforeTax * taxRate);
     }
 
     public double applyProcessingFee(Invoice invoice){
@@ -147,15 +156,15 @@ public class ServiceLayer {
         if (invoice.getQuantity() >10 ){
             processingFee += 15.49;
         }
-        return  processingFee;
+        return  formatDouble(processingFee);
     }
 
     public double calculateTotal(double subtotal, double processingFee, double salesTax) {
-        return subtotal + processingFee + salesTax;
+        return formatDouble(subtotal + processingFee + salesTax);
     }
 
     public double calculateSubtotal(Invoice invoice) {
-        return invoice.getQuantity() * invoice.getUnit_price();
+        return formatDouble(invoice.getQuantity() * invoice.getUnit_price());
     }
 
     public int checkQuantity(int requestedAmount, int availableAmount) {
@@ -166,27 +175,42 @@ public class ServiceLayer {
         }
     }
 
+    public int getItemQuantity(Invoice invoice) {
+        int itemId = invoice.getItem_id();
+
+        switch (invoice.getItem_type()) {
+            case "Games" :
+                return getSingleGame(itemId).get().getQuantity();
+            case "T-shirts" :
+                return getSingleTshirt(itemId).get().getQuantity();
+            case "Consoles" :
+                return getSingleConsole(itemId).get().getQuantity();
+            default:
+                return -1;
+        }
+    }
+
     @Transactional
     public void decreaseItemQuantity(Invoice invoice) {
 
         int requestedAmount = invoice.getQuantity();
 
         switch (invoice.getItem_type()) {
-            case "game":
+            case "Games":
                 Game game = getSingleGame(invoice.getItem_id()).get();
                 availableAmount = game.getQuantity();
                 updatedAmount = checkQuantity(requestedAmount, availableAmount);
                 game.setQuantity(updatedAmount);
                 updateGame(game);
                 break;
-            case "console":
+            case "Consoles":
                 Console console = getSingleConsole(invoice.getItem_id()).get();
                 availableAmount = console.getQuantity();
                 updatedAmount = availableAmount - requestedAmount;
                 console.setQuantity(updatedAmount);
                 updateConsole(console);
                 break;
-            case "tshirt":
+            case "T-shirts":
                 Tshirt tshirt = getSingleTshirt(invoice.getItem_id()).get();
                 availableAmount = tshirt.getQuantity();
                 updatedAmount = availableAmount - requestedAmount;
