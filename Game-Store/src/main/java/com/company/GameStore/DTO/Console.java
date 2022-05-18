@@ -17,18 +17,17 @@ public class Console {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @NotNull
-    private Integer console_id;
-    @NotNull
+    private int console_id;
+    @NotBlank
     @Size(max = 50)
     private String model;
-    @NotNull
+    @NotBlank
     @Size(max = 50)
     private String manufacturer;
-    @NotNull
+    @NotBlank
     @Size(max = 20)
-    @Column(name = "memory_amount")
-    private String memoryAmount;
-    @NotNull
+    private String memory_amount;
+    @NotBlank
     @Size(max = 20)
     private String processor;
     @NotNull
@@ -37,33 +36,30 @@ public class Console {
     @NotNull
     private int quantity;
 
-    public Console(Integer console_id, String model, String manufacturer, String memoryAmount, String processor, double price, int quantity) {
+    public Console(int console_id, String model, String manufacturer, String memory_amount, String processor, double price, int quantity) {
         this.console_id = console_id;
         this.model = model;
         this.manufacturer = manufacturer;
-        this.memoryAmount = memoryAmount;
+        this.memory_amount = memory_amount;
         this.processor = processor;
         this.price = price;
         this.quantity = quantity;
     }
 
-    public Console(String model, String manufacturer, String memoryAmount, String processor, double price, int quantity) {
+    public Console(String model, String manufacturer, String memory_amount, String processor, double price, int quantity) {
         this.model = model;
         this.manufacturer = manufacturer;
-        this.memoryAmount = memoryAmount;
+        this.memory_amount = memory_amount;
         this.processor = processor;
         this.price = price;
         this.quantity = quantity;
     }
 
-    public Console() {
-    }
-
-    public Integer getConsole_id() {
+    public int getConsole_id() {
         return console_id;
     }
 
-    public void setConsole_id(Integer console_id) {
+    public void setConsole_id(int console_id) {
         this.console_id = console_id;
     }
 
@@ -83,12 +79,12 @@ public class Console {
         this.manufacturer = manufacturer;
     }
 
-    public String getMemoryAmount() {
-        return memoryAmount;
+    public String getMemory_amount() {
+        return memory_amount;
     }
 
-    public void setMemoryAmount(String memoryAmount) {
-        this.memoryAmount = memoryAmount;
+    public void setMemory_amount(String memory_amount) {
+        this.memory_amount = memory_amount;
     }
 
     public String getProcessor() {
@@ -120,12 +116,12 @@ public class Console {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Console console = (Console) o;
-        return Double.compare(console.price, price) == 0 && quantity == console.quantity && Objects.equals(console_id, console.console_id) && Objects.equals(model, console.model) && Objects.equals(manufacturer, console.manufacturer) && Objects.equals(memoryAmount, console.memoryAmount) && Objects.equals(processor, console.processor);
+        return console_id == console.console_id && Double.compare(console.price, price) == 0 && quantity == console.quantity && Objects.equals(model, console.model) && Objects.equals(manufacturer, console.manufacturer) && Objects.equals(memory_amount, console.memory_amount) && Objects.equals(processor, console.processor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(console_id, model, manufacturer, memoryAmount, processor, price, quantity);
+        return Objects.hash(console_id, model, manufacturer, memory_amount, processor, price, quantity);
     }
 
     @Override
@@ -134,7 +130,7 @@ public class Console {
                 "console_id=" + console_id +
                 ", model='" + model + '\'' +
                 ", manufacturer='" + manufacturer + '\'' +
-                ", memoryAmount='" + memoryAmount + '\'' +
+                ", memory_amount='" + memory_amount + '\'' +
                 ", processor='" + processor + '\'' +
                 ", price=" + price +
                 ", quantity=" + quantity +
