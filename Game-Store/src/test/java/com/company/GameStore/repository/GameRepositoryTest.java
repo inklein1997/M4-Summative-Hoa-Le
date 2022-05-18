@@ -36,12 +36,12 @@ public class GameRepositoryTest {
 
     @Test
     public void addGetDeleteGame() {
-        Optional<Game> game1 = gameRepository.findById(game.getGame_id());
+        Optional<Game> game1 = gameRepository.findById(game.getId());
 
         assertEquals(game1.get(), game);
 
-        gameRepository.deleteById(game.getGame_id());
-        game1 = gameRepository.findById(game.getGame_id());
+        gameRepository.deleteById(game.getId());
+        game1 = gameRepository.findById(game.getId());
 
         assertFalse(game1.isPresent());
     }
@@ -50,7 +50,7 @@ public class GameRepositoryTest {
     public void updateGame() {
         game.setDescription("New description");
         gameRepository.save(game);
-        Optional<Game> game1 = gameRepository.findById(game.getGame_id());
+        Optional<Game> game1 = gameRepository.findById(game.getId());
 
         assertEquals(game1.get(), game);
     }

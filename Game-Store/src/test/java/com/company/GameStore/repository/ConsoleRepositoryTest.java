@@ -38,12 +38,12 @@ public class ConsoleRepositoryTest {
 
     @Test
     public void addGetDeleteConsole() {
-        Optional<Console> console1 = consoleRepository.findById(console.getConsole_id());
+        Optional<Console> console1 = consoleRepository.findById(console.getId());
 
         assertEquals(console1.get(), console);
 
-        consoleRepository.deleteById(console.getConsole_id());
-        console1 = consoleRepository.findById(console.getConsole_id());
+        consoleRepository.deleteById(console.getId());
+        console1 = consoleRepository.findById(console.getId());
 
         assertFalse(console1.isPresent());
     }
@@ -52,7 +52,7 @@ public class ConsoleRepositoryTest {
     public void updateConsole() {
         console.setManufacturer("New manufacturer");
         consoleRepository.save(console);
-        Optional<Console> console1 = consoleRepository.findById(console.getConsole_id());
+        Optional<Console> console1 = consoleRepository.findById(console.getId());
 
         assertEquals(console1.get(), console);
     }
