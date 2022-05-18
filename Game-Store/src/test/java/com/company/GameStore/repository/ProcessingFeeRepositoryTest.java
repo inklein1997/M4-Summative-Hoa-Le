@@ -29,7 +29,7 @@ public class ProcessingFeeRepositoryTest {
     }
 
     @Test
-    public void shouldFindSalesTaxByState() {
+    public void shouldFindProcessingFeeByProductType() {
         ProcessingFee expectedProcessingFeeGames = new ProcessingFee("Games",1.49);
         ProcessingFee actualProcessingFeeGames = processingFeeRepository.findByProductType("Games");
 
