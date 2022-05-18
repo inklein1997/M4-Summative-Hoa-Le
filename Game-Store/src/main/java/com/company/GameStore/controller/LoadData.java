@@ -1,5 +1,6 @@
 package com.company.GameStore.controller;
 
+import com.company.GameStore.service.ProcessingFeeLayer;
 import com.company.GameStore.service.ServiceLayer;
 import com.company.GameStore.service.TaxServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoadData {
 
     @Autowired
-    TaxServiceLayer serviceLayer;
+    TaxServiceLayer taxServiceLayer;
+
+    @Autowired
+    ProcessingFeeLayer processingFeeLayer;
 
     @PostMapping("/loadData")
     @ResponseStatus(HttpStatus.CREATED)
     public void seedData() {
-        serviceLayer.loadTaxes();
+        taxServiceLayer.loadTaxes();
+        processingFeeLayer.loadFee();
     }
 }

@@ -92,6 +92,7 @@ public class ServiceLayerTest {
         doReturn(invoiceList).when(invoiceRepository).findAll();
         doReturn(Optional.of(invoice1)).when(invoiceRepository).findById(1);
         doReturn(invoice1).when(invoiceRepository).save(invoice1);
+
     }
 
     private void setUpSalesTaxRateRepositoryMock() {
@@ -265,8 +266,8 @@ public class ServiceLayerTest {
 
     @Test
     public void shouldCreateInvoice() {
-        Invoice expectedInvoice = new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "TX", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8);
-        Invoice savedInvoice = serviceLayer.addInvoice(new Invoice(1, "Michael Klein", "12345 Big Oak Dr.", "Austin", "Tx", "78727", "Games", 1, 49.99, 10, 499.99, 40.00, 14.90, 554.8));
+        Invoice expectedInvoice = invoice1;
+        Invoice savedInvoice = serviceLayer.addInvoice(invoice1);
 
         assertEquals(expectedInvoice, savedInvoice);
     }
@@ -274,7 +275,6 @@ public class ServiceLayerTest {
     @Test
     public void shouldCalculateSalesTax() {
         expectedTax = 15.00;
-//        System.out.println(invoice1);
         actualTax = serviceLayer.applyTaxRate(invoice1);
 
         assertEquals(expectedTax, actualTax, .01);

@@ -87,6 +87,19 @@ public class Invoice {
         this.total = total;
     }
 
+    public Invoice(Integer invoice_id, String name, String street, String city, String state, String zipcode, String item_type, int item_id, double unit_price, int quantity) {
+        this.invoice_id = invoice_id;
+        this.name = name;
+        this.street = street;
+        this.city = city;
+        this.state = state;
+        this.zipcode = zipcode;
+        this.item_type = item_type;
+        this.item_id = item_id;
+        this.unit_price = unit_price;
+        this.quantity = quantity;
+    }
+
     public Invoice(String name, String street, String city, String state, String zipcode, String item_type, int item_id, double unit_price, int quantity) {
         this.name = name;
         this.street = street;

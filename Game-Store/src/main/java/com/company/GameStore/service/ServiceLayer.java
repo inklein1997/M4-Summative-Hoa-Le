@@ -11,6 +11,9 @@ import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -121,41 +124,56 @@ public class ServiceLayer {
     }
 
     public Invoice addInvoice(Invoice invoice) {
+        System.out.println("================================================");
+        System.out.println(invoice);
         Invoice updatedInvoice = invoice;
-
         double salesTax = applyTaxRate(invoice);
         double processingFee = applyProcessingFee(invoice);
         double subtotal = calculateSubtotal(invoice);
         double total = calculateTotal(subtotal, processingFee, salesTax);
+        System.out.println("-------------------------------------------");
+        System.out.println(updatedInvoice);
 
         updatedInvoice.setTax(salesTax);
         updatedInvoice.setProcessing_fee(processingFee);
         updatedInvoice.setSubtotal(subtotal);
         updatedInvoice.setTotal(total);
+        System.out.println("00000000000000000000000000000000000000000000000000000000000000000000000000000");
+        System.out.println(updatedInvoice);
 
         return invoiceRepository.save(updatedInvoice);
+    }
+
+
+    public double formatDouble(double d) {
+        return Double.parseDouble(String.format("%,.2f", d));
     }
 
     public double applyTaxRate(Invoice invoice) {
         double priceBeforeTax = invoice.getQuantity() * invoice.getUnit_price();
         double taxRate = salesTaxRateRepository.findByState(invoice.getState()).getRate();
-        return priceBeforeTax * taxRate;
+        System.out.println("APPLYING TAX RATE!");
+        return formatDouble(priceBeforeTax * taxRate);
     }
 
     public double applyProcessingFee(Invoice invoice){
         double processingFee = processingFeeRepository.findByProductType(invoice.getItem_type()).getFee();
+        System.out.println(processingFee);
         if (invoice.getQuantity() >10 ){
             processingFee += 15.49;
         }
-        return  processingFee;
+        System.out.println("APPLYING PROCESSING FEE!");
+        return  formatDouble(processingFee);
     }
 
     public double calculateTotal(double subtotal, double processingFee, double salesTax) {
-        return subtotal + processingFee + salesTax;
+        System.out.println("CALCULATING TOTAL");
+        return formatDouble(subtotal + processingFee + salesTax);
     }
 
     public double calculateSubtotal(Invoice invoice) {
-        return invoice.getQuantity() * invoice.getUnit_price();
+        System.out.println("CALCULATING SUBTOTAL");
+        return formatDouble(invoice.getQuantity() * invoice.getUnit_price());
     }
 
     public int checkQuantity(int requestedAmount, int availableAmount) {
@@ -172,21 +190,21 @@ public class ServiceLayer {
         int requestedAmount = invoice.getQuantity();
 
         switch (invoice.getItem_type()) {
-            case "game":
+            case "Games":
                 Game game = getSingleGame(invoice.getItem_id()).get();
                 availableAmount = game.getQuantity();
                 updatedAmount = checkQuantity(requestedAmount, availableAmount);
                 game.setQuantity(updatedAmount);
                 updateGame(game);
                 break;
-            case "console":
+            case "Consoles":
                 Console console = getSingleConsole(invoice.getItem_id()).get();
                 availableAmount = console.getQuantity();
                 updatedAmount = availableAmount - requestedAmount;
                 console.setQuantity(updatedAmount);
                 updateConsole(console);
                 break;
-            case "tshirt":
+            case "Tshirts":
                 Tshirt tshirt = getSingleTshirt(invoice.getItem_id()).get();
                 availableAmount = tshirt.getQuantity();
                 updatedAmount = availableAmount - requestedAmount;

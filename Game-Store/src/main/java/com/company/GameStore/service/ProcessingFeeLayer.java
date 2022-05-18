@@ -4,7 +4,9 @@ import com.company.GameStore.DTO.ProcessingFee;
 import com.company.GameStore.DTO.SalesTaxRate;
 import com.company.GameStore.repository.ProcessingFeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ProcessingFeeLayer {
     @Autowired
     ProcessingFeeRepository processingFeeRepository;
