@@ -2,6 +2,7 @@ package com.company.GameStore.service;
 
 import com.company.GameStore.DTO.*;
 
+//import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.exception.QueryNotFoundException;
 import com.company.GameStore.repository.*;
 
@@ -168,7 +169,7 @@ public class ServiceLayer {
     }
 
     public int checkQuantity(int requestedAmount, int availableAmount) {
-        if (availableAmount > requestedAmount) {
+        if (availableAmount >= requestedAmount) {
             return availableAmount - requestedAmount;
         } else {
             throw new DataIntegrityViolationException("Unfortunately, there is not enough of that item in stock to purchase that many.  Please add to stock or order less");
