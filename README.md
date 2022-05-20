@@ -77,5 +77,5 @@ If you have any questions, please feel free to reach out to any of us!
 | ----------- | ----------- | ----------- |
 | Michael Klein | [@inklein1997](https://github.com/inklein1997) | michaelklein1997@gmail.com |
 | Hoa | [@hoale123](https://github.com/hoale123) | hoa_le9485@yahoo.com |
-| Honorine Ndom Ndzah | [@Honorinenn](honorinendzah@gmail.com) | arsementfarms@gmail.com |
+| Honorine Ndom Ndzah | [@Honorinenn](https://github.com/Honorinenn) | honorinendzah@gmail.com |
 [^1]: Code of Conduct provided by [Contributor Covenant](https://www.contributor-covenant.org/)
